@@ -6,7 +6,7 @@
 
 ## Paper
 
-This repository contains the LaTeX source for our paper "Title of Your Paper". You can find:
+This repository contains the LaTeX source for our paper "King Wen Sequence of the I-Ching as a Proto-AGI Learning Framework". You can find:
 
 - The compiled PDF in the `paper` directory
 - LaTeX source files in the `paper` directory
