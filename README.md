@@ -1,49 +1,87 @@
+# King Wen AGI Framework
 
-## Description:
+[![DOI](https://zenodo.org/badge/DOI/your-doi-here.svg)](https://doi.org/your-doi-here)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-The project hosts an aesthetic and simple LaTeX style suitable for "preprint" publications such as arXiv, techrXhiv and biorXiv, etc. 
-It is based on the [**nips_2018.sty**](https://media.nips.cc/Conferences/NIPS2018/Styles/nips_2018.sty) style.
+## Paper
 
-This styling maintains the esthetic of NeurIPS but adding and changing features to make it (IMO) even better and more suitable for preprints.
-The result looks fairly different from NeurIPS style so that readers won't get confused to think that the preprint was published in NeurIPS. 
+This repository contains the LaTeX source for our paper "Title of Your Paper". You can find:
 
-### Why NeurIPS? 
-Because the NeurIPS styling is a comfortable single column format that is very esthetic and convenient for reading.
+- The compiled PDF in the `paper` directory
+- LaTeX source files in the `paper` directory
+- Supporting materials and code in the `src` directory
 
-## Usage:
-1. Use Document class **article**. 
-2. Copy **arxiv.sty** to the folder containing your tex file.
-3. add `\usepackage{arxiv}` after `\documentclass{article}`.
-4. The only packages used in the style file are **geometry** and **fancyheader**. Do not reimport them.
+If you use this work in your research, please cite:
 
-See **template.tex** 
+```bibtex
+@article{AugustinChan2025kingwen,
+  title={King Wen Sequence of the I-Ching as a Proto-AGI Learning Framework},
+  author={Augustin Chan},
+  year={2025},
+  publisher={Zenodo},
+  doi={your-doi-here}
+}
+```
 
-## Project files:
-1. **arxiv.sty** - the style file.
-2. **template.tex** - a sample template that uses the **arxiv style**.
-3. **references.bib** - the bibliography source file for template.tex.
-4. **template.pdf** - a sample output of the template file that demonstrated the design provided by the arxiv style.
+## LaTeX Template
 
+This project uses a modified arXiv-style LaTeX template based on the NeurIPS 2018 style. The template provides a clean, single-column format optimized for preprint submissions.
 
-## Handling References when submitting to arXiv.org
-The most convenient way to manage references is using an external BibTeX file and pointing to it from the main file. 
-However, this requires running the [bibtex](http://www.bibtex.org/) tool to "compile" the `.bib` file and create `.bbl` file containing "bibitems" that can be directly inserted in the main tex file. 
-However, unfortunately the arXiv Tex environment ([Tex Live](https://www.tug.org/texlive/)) do not do that. 
-So easiest way when submitting to arXiv is to create a single self-contained .tex file that contains the references.
-This can be done by running the BibTeX command on your machine and insert the content of the generated `.bbl` file into the `.tex` file and commenting out the `\bibliography{references}` that point to the external references file.
+### Usage
 
-Below are the commands that should be run in the project folder:
-1. Run `$ latex template`
-2. Run `$ bibtex template`
-3. A `template.bbl` file will be generated (make sure it is there)
-4. Copy the `template.bbl` file content to `template.tex` into the `\begin{thebibliography}` command.
-5. Comment out the `\bibliography{references}` command in `template.tex`.
-6. You ready to submit to arXiv.org.
+1. Use document class **article**
+2. Copy **arxiv.sty** to your tex file's directory
+3. Add `\usepackage{arxiv}` after `\documentclass{article}`
+4. Required packages (included in style): **geometry** and **fancyheader**
 
+### Build Instructions
 
-## General Notes:
-1. For help, comments, praises, bug reporting or change requests, you can contact the author at: kourgeorge/at/gmail.com.
-2. You can use, redistribute and do whatever with this project, however, the author takes no responsibility on whatever usage of this project.
-3. If you start another project based on this project, it would be nice to mention/link to this project.
-4. You are very welcome to contribute to this project.
-5. A good looking 2 column template can be found in https://github.com/brenhinkeller/preprint-template.tex.
+The repository includes VSCode LaTeX Workshop settings. To build:
+
+1. Install required LaTeX packages
+2. Use the provided `settings.json` configuration
+3. Build will trigger automatically on save, or:
+   ```bash
+   xelatex -shell-escape paper
+   bibtex paper
+   xelatex -shell-escape paper
+   xelatex -shell-escape paper
+   ```
+
+### arXiv Submission
+
+When submitting to arXiv:
+
+1. Run `latex paper && bibtex paper`
+2. Copy contents of generated `.bbl` file into your tex file
+3. Comment out `\bibliography{references}`
+4. Submit the self-contained tex file
+
+## License
+
+- Code: [MIT License](License.txt)
+- Paper and Documentation: [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Citation and Reuse
+
+If you use this template or code in your work:
+1. Cite our paper using the BibTeX entry above
+2. Link back to this repository
+3. Check the licenses for code (MIT) and documentation (CC-BY 4.0)
+
+## Archived Versions
+
+This repository is archived on Zenodo for long-term preservation. You can find specific versions:
+- [Latest Release](https://doi.org/your-doi-here)
+- [All Versions](https://zenodo.org/record/your-record-number)
+
+## Contact
+
+For questions or issues, please:
+1. Open an issue in this repository
+2. Contact the authors through the paper's corresponding email
