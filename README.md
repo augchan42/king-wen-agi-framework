@@ -1,6 +1,6 @@
 # King Wen AGI Framework
 
-[![DOI](https://zenodo.org/badge/DOI/your-doi-here.svg)](https://doi.org/your-doi-here)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14679538.svg)](https://doi.org/10.5281/zenodo.14679538)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
@@ -20,7 +20,7 @@ If you use this work in your research, please cite:
   author={Augustin Chan},
   year={2025},
   publisher={Zenodo},
-  doi={your-doi-here}
+  doi={10.5281/zenodo.14679538}
 }
 ```
 
@@ -77,8 +77,8 @@ If you use this template or code in your work:
 ## Archived Versions
 
 This repository is archived on Zenodo for long-term preservation. You can find specific versions:
-- [Latest Release](https://doi.org/your-doi-here)
-- [All Versions](https://zenodo.org/record/your-record-number)
+- [Latest Release](https://doi.org/10.5281/zenodo.14679538)
+- [All Versions](https://zenodo.org/records/14679538)
 
 ## Contact
 
