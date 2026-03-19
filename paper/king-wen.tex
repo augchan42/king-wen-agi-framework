@@ -515,7 +515,72 @@ neither strictly easy-to-hard nor random.
 \end{itemize}
 
 %% ============================================================
-\section{Proposed Validation: OpenSpiel Simulation}\label{sec:validation}
+\section{Minimal Validation: Anti-Habituation LR Schedule}\label{sec:minimal}
+%% ============================================================
+
+Before building a full multi-agent simulation, the anti-habituation
+hypothesis can be tested directly on a standard neural network training
+task by applying the King Wen sequence's surprise profile as a learning
+rate schedule modulation.
+
+\subsection{Experiment Design}
+
+We use a single-GPU language model training setup (following
+Karpathy's autoresearch framework) with a fixed 5-minute time budget
+per run. The only experimental variable is the learning rate schedule.
+The model architecture, optimizer, data, and evaluation are held
+constant.
+
+The standard schedule uses a monotonic warmup $\to$ constant $\to$
+warmdown envelope. We modulate this envelope by the King Wen
+sequence's normalized surprise values, mapping training progress
+$[0, 1]$ to the 63 transition surprise values:
+
+\begin{equation}
+\text{lr}(t) = \text{envelope}(t) \cdot \left(1 + A \cdot (2 \cdot s_{\lfloor 63t \rfloor} - 1)\right)
+\end{equation}
+
+where $\text{envelope}(t)$ is the standard warmup/warmdown schedule,
+$A$ is the perturbation amplitude, and $s_i \in [0,1]$ is the
+normalized King Wen surprise at transition $i$.
+
+\subsection{Controls}
+
+Three controls isolate the anti-habituation effect:
+
+\begin{enumerate}
+\tightlist
+\item \textbf{Standard baseline:} Unmodified monotonic schedule
+\item \textbf{Random perturbation:} Same amplitude $A$, but with
+pseudo-random modulation values. Tests whether \emph{any}
+perturbation helps.
+\item \textbf{Shao Yong perturbation:} Same amplitude $A$, but with
+a sawtooth pattern mimicking the Shao Yong ordering's highly
+autocorrelated surprise profile. Tests whether \emph{structured
+but predictable} perturbation helps.
+\end{enumerate}
+
+\subsection{Predictions}
+
+If the anti-habituation hypothesis is correct:
+
+\begin{itemize}
+\tightlist
+\item King Wen schedule achieves lower validation loss than standard
+baseline (the modulation prevents optimizer habituation)
+\item King Wen outperforms random perturbation (the specific surprise
+profile matters, not just noise)
+\item King Wen outperforms Shao Yong perturbation (unpredictability
+matters; a learnable modulation pattern is tuned out)
+\end{itemize}
+
+This experiment requires approximately 1 hour of single-GPU compute
+(12 runs of 5 minutes each). The experiment code is available in
+the project
+repository.\footnote{\url{https://github.com/augchan42/king-wen-agi-framework/tree/main/experiment}}
+
+%% ============================================================
+\section{Extended Validation: OpenSpiel Simulation}\label{sec:validation}
 %% ============================================================
 
 To test whether the King Wen sequence's curriculum properties confer
