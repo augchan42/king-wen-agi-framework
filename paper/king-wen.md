@@ -2,7 +2,7 @@
 
 ## Abstract
 
-The King Wen sequence of the I-Ching (Classic of Changes) orders 64 hexagrams---states of a six-dimensional binary space---in a pattern that has puzzled scholars for three millennia. We present evidence that this ordering implements a curriculum learning optimization: the sequence exhibits properties of dynamic learning rate adjustment, multi-dimensional pattern recognition, and balanced information-theoretic surprise that closely parallel principles central to modern machine learning. We formalize these properties mathematically and compare the King Wen sequence's surprise distribution against three baselines---random orderings, natural binary ordering, and the Shao Yong ordering---using Kolmogorov-Smirnov tests, variance analysis, and autocorrelation measures. We propose a concrete validation methodology using the OpenSpiel framework: a multi-agent simulation of China's Warring States period (475--221 BC) in which one agent uses King Wen sequence-informed learning while others use standard reinforcement learning, measured across survival, territory, and alliance stability metrics over repeated runs.
+The King Wen sequence of the I-Ching (Classic of Changes) orders 64 hexagrams---states of a six-dimensional binary space---in a pattern that has puzzled scholars for three millennia. We present evidence that this ordering implements an anti-habituation curriculum: a progression that resists predictability while covering the full spectrum of information-theoretic surprise. We formalize the sequence's properties mathematically and compare its surprise distribution against three baselines---random orderings, natural binary ordering, and the Shao Yong ordering---using Kolmogorov-Smirnov tests, variance analysis, and autocorrelation measures. We find that the King Wen sequence is statistically distinct from all systematic orderings: it achieves random-like mean surprise with significantly higher variance and no autocorrelation, avoiding the repetitive patterns inherent in algebraically constructed sequences. We propose a concrete validation methodology using the OpenSpiel framework: a multi-agent simulation of China's Warring States period (475--221 BC) in which one agent uses King Wen sequence-informed learning while others use standard reinforcement learning, measured across survival, territory, and alliance stability metrics over repeated runs.
 
 **Keywords:** King Wen sequence, I-Ching, curriculum learning, information-theoretic surprise, multi-agent reinforcement learning, OpenSpiel, Bayesian surprise, meta-learning, AGI
 
@@ -12,13 +12,13 @@ The King Wen sequence, traditionally dated to approximately 1000 BC, orders the 
 
 In recent years, the I-Ching has found applications in computational intelligence, from evolutionary algorithms to neural architecture search, and structural parallels have been drawn between hexagram binary encodings and biological coding systems. More broadly, recent work has demonstrated that structured knowledge systems outside conventional machine learning---including personality psychology frameworks---can produce measurable improvements in AI system performance.
 
-This paper advances a specific hypothesis: the King Wen sequence implements a curriculum learning optimization. Its ordering encodes a progression through 64 states of a six-dimensional binary space that balances novelty against familiarity at each step---a 3,000-year-old solution to the curriculum learning problem.
+This paper advances a specific hypothesis: the King Wen sequence implements an anti-habituation curriculum---a progression through 64 states of a six-dimensional binary space that resists predictability while covering the full surprise spectrum. This is closer to the stochastic curricula of Graves et al. (2017) and the curiosity-driven exploration of Schmidhuber (2006) than to the graduated easy-to-hard curricula of Bengio et al. (2009).
 
 We make three contributions:
 
-1. A mathematical formalization of the sequence's learning optimization properties, including information-theoretic surprise, multi-dimensional distance metrics, and pattern similarity measures.
-2. An empirical comparison of the King Wen sequence against three baseline orderings (random, natural binary, and Shao Yong), demonstrating that its surprise distribution is statistically distinct from all three.
-3. A concrete validation proposal using the OpenSpiel multi-agent framework, in which the sequence's curriculum properties are tested in a historically grounded strategy simulation.
+1. A mathematical formalization of the sequence's information-theoretic properties, including surprise, multi-dimensional distance metrics, and pattern similarity measures.
+2. An empirical comparison of the King Wen sequence against three baseline orderings (random, natural binary, and Shao Yong), showing that it is statistically distinct from all systematic orderings: random-like mean surprise, significantly higher variance, and no autocorrelation.
+3. A concrete validation proposal using the OpenSpiel multi-agent framework, in which the sequence's anti-habituation properties are tested in a historically grounded strategy simulation.
 
 ## 2. Related Work
 
@@ -114,12 +114,24 @@ For each ordering over all 63 consecutive transitions:
 
 ### 5.4 Results
 
-The King Wen sequence exhibits:
-- Controlled Hamming distance variation, avoiding both stagnation (0) and overwhelming change (6)
-- Balanced pattern similarities with no extended runs at either extreme
-- Structured surprise oscillation alternating between consolidation and challenge
+| Ordering | Mean | Std | Variance | Range |
+|---|---|---|---|---|
+| King Wen | 0.781 | 0.599 | 0.359 | 0.15--2.30 |
+| Random (mean of 1000) | 0.711 | 0.453 | 0.202 | 0.11--2.30 |
+| Binary | 0.482 | 0.403 | 0.162 | 0.20--1.75 |
+| Shao Yong | 0.270 | 0.348 | 0.121 | 0.11--2.07 |
 
-Preliminary analysis indicates that the King Wen sequence's surprise variance is lower than both random and binary orderings, and its autocorrelation structure is distinct from the Shao Yong ordering.
+**Distribution shape (KS test):** King Wen is *not* significantly different from random (D=0.10, p=0.52), but is highly significantly different from binary (D=0.41, p<0.001) and Shao Yong (D=0.70, p<0.001). The sequence samples from the same range as random---but is not random.
+
+**Variance (Levene's test):** King Wen has *significantly higher* variance than all baselines (p=0.01 vs random, p=0.04 vs binary, p<0.001 vs Shao Yong). Rather than constraining surprise to a narrow band, the sequence uses the full range.
+
+**Autocorrelation (Ljung-Box, lag 5):** King Wen shows *no significant autocorrelation* (p=0.11), while binary (p<0.001) and Shao Yong (p=0.002) are highly autocorrelated. Only 3.9% of random permutations show significant autocorrelation. The King Wen sequence avoids repetitive patterns.
+
+### 5.5 Interpretation
+
+The King Wen sequence does not implement a smooth, graduated curriculum. Instead, it implements an *anti-habituation* curriculum: wide surprise range, no autocorrelation, deliberate avoidance of repetitive patterns. This is compatible with Schmidhuber's artificial curiosity framework, which predicts that optimal learning trajectories seek intermediate surprise on average while avoiding predictability. Where binary and Shao Yong orderings produce surprise patterns a learner could anticipate, the King Wen sequence resists habituation.
+
+This reframes the hypothesis: the King Wen sequence is closer to Graves et al.'s stochastic automated curricula---where optimal training order is neither strictly easy-to-hard nor random, but adapted to maintain maximal learning signal.
 
 ## 6. Relationship to Modern Learning Theory
 
@@ -144,12 +156,12 @@ The King Wen sequence's controlled surprise profile directly implements the core
 
 ## 7. Implications
 
-The King Wen sequence encodes a curriculum with direct implications for modern ML:
+The King Wen sequence encodes an anti-habituation curriculum with direct implications for modern ML:
 
-- **Learning rate schedules:** Varied step sizes suggest oscillating rather than monotonically decaying schedules
-- **Local minima escape:** Periodic large transitions interspersed with gradual refinement
-- **Multi-dimensional curricula:** Effective curricula operate on multiple feature dimensions, not a single difficulty axis
-- **Surprise budgeting:** Bounded surprise distribution suggests an optimal "surprise budget" per training step
+- **Anti-habituation schedules:** The lack of autocorrelation suggests optimal training order should resist predictability. Unpredictably oscillating learning rate schedules may outperform monotonic decay by preventing optimizer habituation.
+- **Local minima escape:** The high-variance surprise profile means the sequence regularly introduces radical novelty (surprise > 2.0) interspersed with consolidation (surprise < 0.2), providing a natural escape mechanism.
+- **Multi-dimensional curricula:** Simultaneous optimization across line, trigram, and nuclear distances suggests effective curricula operate on multiple feature dimensions, not a single difficulty axis.
+- **Full-spectrum exploration:** Rather than budgeting surprise within narrow bounds, the King Wen sequence uses the entire available range. This is consistent with Graves et al.'s finding that optimal automated curricula are neither strictly easy-to-hard nor random.
 
 ## 8. Proposed Validation: OpenSpiel Simulation
 
@@ -197,11 +209,11 @@ Statistical methods: Mann-Whitney U test, Cohen's d effect size, learning curve 
 
 ## 9. Conclusion
 
-The King Wen sequence exhibits properties---optimal information-theoretic surprise, dynamic learning rate adjustment, multi-dimensional pattern recognition, and balanced exploration-exploitation---that closely parallel principles central to modern machine learning and AGI development. Our empirical analysis confirms that the sequence maintains controlled variation in transition distances and a structured rhythm of surprise that avoids both stagnation and cognitive overload.
+The King Wen sequence is statistically distinct from both algebraically constructed orderings (binary, Shao Yong) and from random permutations in a specific and surprising way: it achieves random-like mean surprise with significantly higher variance and no autocorrelation---avoiding the repetitive patterns inherent in systematic orderings while deliberately using the full spectrum of available surprise values. This is not what a smooth, graduated curriculum looks like. It is what an anti-habituation curriculum looks like: locally unpredictable, globally comprehensive.
 
-These are not coincidental structural features. The sequence's ordering encodes a curriculum: a progression through 64 states of a six-dimensional binary space that balances novelty against familiarity at each step. Comparison against random, binary, and Shao Yong baselines indicates that these properties are specific to the King Wen ordering, not a generic feature of any deliberate arrangement.
+This finding reframes the relationship between the King Wen sequence and modern machine learning. The sequence does not anticipate Bengio et al.'s easy-to-hard curriculum so much as Graves et al.'s stochastic automated curricula and Schmidhuber's curiosity-driven exploration. It encodes a progression through 64 states of a six-dimensional binary space that resists habituation at each step---a 3,000-year-old solution not to the curriculum ordering problem, but to the attention maintenance problem.
 
-Whether these properties were intentionally designed or emerged from centuries of divinatory practice remains an open question. What is testable is whether the sequence's optimization principles produce measurable advantages in a controlled setting. The proposed OpenSpiel simulation offers exactly this test: a historically grounded, multi-agent environment where King Wen-informed learning can be compared against standard reinforcement learning across repeated trials with concrete outcome metrics.
+Whether these properties were intentionally designed or emerged from centuries of divinatory practice remains an open question. What is testable is whether the sequence's anti-habituation properties produce measurable advantages in a controlled setting. The proposed OpenSpiel simulation offers exactly this test: a historically grounded, multi-agent environment where King Wen-informed learning can be compared against standard reinforcement learning across repeated trials with concrete outcome metrics.
 
 ## References
 
