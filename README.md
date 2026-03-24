@@ -6,57 +6,45 @@
 
 ## Paper
 
-This repository contains the LaTeX source for our paper "King Wen Sequence of the I-Ching as a Proto-AGI Learning Framework". You can find:
+**Statistical Properties of the King Wen Sequence: An Anti-Habituation Structure That Does Not Improve Neural Network Training**
 
-- The compiled PDF in the `paper` directory
-- LaTeX source files in the `paper` directory
-- Supporting materials and code in the `src` directory
+The King Wen sequence has genuine statistical properties (confirmed by Monte Carlo analysis against 100,000 random baselines) but they do not improve neural network training. This is a negative result paper reporting experiments across two platforms (NVIDIA RTX 2060 with PyTorch, Apple Silicon with MLX).
+
+- [Paper PDF](paper/king-wen.pdf)
+- [Markdown source](paper/king-wen.md)
+- [LaTeX source](paper/king-wen.tex)
+- [arXiv submission archive](king-wen-arxiv.tar.gz)
 
 If you use this work in your research, please cite:
 
 ```bibtex
-@article{AugustinChan2025kingwen,
-  title={King Wen Sequence of the I-Ching as a Proto-AGI Learning Framework},
+@article{Chan2026kingwen,
+  title={Statistical Properties of the King Wen Sequence: An Anti-Habituation Structure That Does Not Improve Neural Network Training},
   author={Augustin Chan},
-  year={2025},
+  year={2026},
   publisher={Zenodo},
   doi={10.5281/zenodo.19199267}
 }
 ```
 
-## LaTeX Template
+## Repository Structure
 
-This project uses a modified arXiv-style LaTeX template based on the NeurIPS 2018 style. The template provides a clean, single-column format optimized for preprint submissions.
+- `paper/` — Paper source (markdown, LaTeX, PDF), statistical results, figures
+- `experiment/` — LR schedule implementations and experiment protocol
+- `arxiv-submission/` — Flat files ready for arXiv upload
+- `arxiv.sty` — arXiv preprint style file
 
-### Usage
+## Build Instructions
 
-1. Use document class **article**
-2. Copy **arxiv.sty** to your tex file's directory
-3. Add `\usepackage{arxiv}` after `\documentclass{article}`
-4. Required packages (included in style): **geometry** and **fancyheader**
+```bash
+cd paper
+pdflatex king-wen.tex
+bibtex king-wen
+pdflatex king-wen.tex
+pdflatex king-wen.tex
+```
 
-### Build Instructions
-
-The repository includes VSCode LaTeX Workshop settings. To build:
-
-1. Install required LaTeX packages
-2. Use the provided `settings.json` configuration
-3. Build will trigger automatically on save, or:
-   ```bash
-   xelatex -shell-escape paper
-   bibtex paper
-   xelatex -shell-escape paper
-   xelatex -shell-escape paper
-   ```
-
-### arXiv Submission
-
-When submitting to arXiv:
-
-1. Run `latex paper && bibtex paper`
-2. Copy contents of generated `.bbl` file into your tex file
-3. Comment out `\bibliography{references}`
-4. Submit the self-contained tex file
+Requires TeX Live 2025+ with `libertine` and `newtxmath` packages.
 
 ## License
 
