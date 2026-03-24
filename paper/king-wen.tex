@@ -15,7 +15,7 @@
 \definecolor{shadecolor}{RGB}{248,248,248}
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 
-\title{King Wen Sequence of the I-Ching as a Proto-AGI Learning Framework}
+\title{Statistical Properties of the King Wen Sequence:\\An Anti-Habituation Structure That Does Not Improve Neural Network Training}
 \author{Augustin Chan\\
 \texttt{aug@iterative.day}\\
 Independent Researcher}
@@ -25,82 +25,31 @@ Independent Researcher}
 \maketitle
 
 \begin{abstract}
-The King Wen sequence of the I-Ching (Classic of Changes) orders 64
-hexagrams---states of a six-dimensional binary space---in a pattern that
-has puzzled scholars for three millennia. We present evidence that this
-ordering implements an anti-habituation curriculum: a progression that
-resists predictability while covering the full spectrum of
-information-theoretic surprise. We formalize the sequence's properties
-mathematically and compare its surprise distribution against three
-baselines---random orderings, natural binary ordering, and the Shao
-Yong ordering---using Kolmogorov-Smirnov tests, variance analysis, and
-autocorrelation measures. We find that the King Wen sequence is
-statistically distinct from all systematic orderings: it achieves
-random-like mean surprise with significantly higher variance and no
-autocorrelation, avoiding the repetitive patterns inherent in
-algebraically constructed sequences. We propose a concrete validation
-methodology using the OpenSpiel framework: a multi-agent simulation of
-China's Warring States period (475--221 BC) in which one agent uses
-King Wen sequence-informed learning while others use standard
-reinforcement learning, measured across survival, territory, and
-alliance stability metrics over repeated runs.
+The King Wen sequence of the I-Ching (c.\ 1000 BC) orders 64 hexagrams---states of a six-dimensional binary space---in a pattern that has puzzled scholars for three millennia. We present a rigorous statistical characterization of this ordering using Monte Carlo permutation analysis against 100,000 random baselines. We find that the sequence has four statistically significant properties: higher-than-random transition distance (98.2nd percentile), negative lag-1 autocorrelation ($p=0.037$), yang-balanced groups of four ($p=0.002$), and asymmetric within-pair vs.\ between-pair distances (99.2nd percentile). These properties superficially resemble principles from curriculum learning and curiosity-driven exploration, motivating the hypothesis that they might benefit neural network training. We test this hypothesis through three experiments: learning rate schedule modulation, curriculum ordering, and seed sensitivity analysis, conducted across two hardware platforms (NVIDIA RTX 2060 with PyTorch and Apple Silicon with MLX). The results are uniformly negative. King Wen LR modulation degrades performance at all tested amplitudes. As curriculum ordering, King Wen is the worst non-sequential ordering on one platform and within noise on the other. A 30-seed sweep confirms that only King Wen's degradation exceeds natural seed variance. We explain why: the sequence's high variance---the very property that makes it statistically distinctive---destabilizes gradient-based optimization. Anti-habituation in a fixed combinatorial sequence is not the same as effective training dynamics.
 \end{abstract}
 
-\textbf{Keywords:} King Wen sequence, I-Ching, curriculum learning,
-information-theoretic surprise, multi-agent reinforcement learning,
-OpenSpiel, Bayesian surprise, meta-learning, AGI
-
-\textbf{MSC2020 Classifications:} 68T07 (Artificial General Intelligence),
-68T05 (Learning and Adaptive Systems), 94A15 (Information Theory),
-68Q32 (Computational Learning Theory)
+\textbf{Keywords:} King Wen sequence, I-Ching, curriculum learning, information-theoretic surprise, negative results, learning rate scheduling, reproducibility
 
 %% ============================================================
 \section{Introduction}\label{sec:introduction}
 %% ============================================================
 
-The King Wen sequence, traditionally dated to approximately 1000 BC,
-orders the 64 hexagrams of the I-Ching in a pattern that has long
-puzzled scholars \cite{smith2012iching}. Unlike the Shao Yong ordering
-(c.\ 1050 AD), which follows a straightforward binary enumeration, the
-King Wen sequence exhibits no obvious numerical or algebraic rule.
-The mathematical significance of its structure was first recognized by
-Leibniz, who discovered parallels between the binary number system and
-the I-Ching's hexagrams \cite{leibniz1703binary}.
+The King Wen sequence, traditionally dated to approximately 1000 BC, orders the 64 hexagrams of the I-Ching in a pattern that has long defied mathematical explanation. Unlike the Shao Yong ordering (c.\ 1050 AD), which follows a straightforward binary enumeration, the King Wen sequence exhibits no obvious numerical or algebraic rule. The mathematical significance of its structure was first recognized by Leibniz \cite{leibniz1703binary}, who discovered parallels between the binary number system and the I-Ching's hexagrams.
 
-In recent years, the I-Ching has found applications in computational
-intelligence, from evolutionary algorithms \cite{chen2016iching} to
-neural architecture search \cite{zhang2021asnas}, and structural
-parallels have been drawn between hexagram binary encodings and
-biological coding systems \cite{petoukhov2017iching}. More broadly,
-recent work has demonstrated that structured knowledge systems outside
-conventional machine learning---including personality psychology
-frameworks---can produce measurable improvements in AI system performance
-\cite{choi2023confirm}.
+In recent years, the I-Ching has found applications in computational intelligence, from evolutionary algorithms \cite{chen2016iching} to neural architecture search \cite{zhang2021asnas}. More broadly, structured knowledge systems outside conventional machine learning have shown measurable impacts on AI system performance \cite{choi2023confirm}.
 
-This paper advances a specific hypothesis: the King Wen sequence
-implements an anti-habituation curriculum---a progression through 64
-states of a six-dimensional binary space that resists predictability
-while covering the full surprise spectrum. This is closer to the
-stochastic curricula of Graves et al.\ \cite{graves2017automated} and
-the curiosity-driven exploration of Schmidhuber
-\cite{schmidhuber2006developmental} than to the graduated easy-to-hard
-curricula of Bengio et al.\ \cite{bengio2009curriculum}.
+We begin by establishing that the King Wen sequence has genuine statistical structure. Using Monte Carlo permutation analysis against 100,000 random baselines, we confirm four properties that distinguish it from chance orderings: high transition distance, negative autocorrelation, local yang balance, and pair-level asymmetry. These properties superficially resemble principles from curriculum learning \cite{bengio2009curriculum,graves2017automated} and curiosity-driven exploration \cite{schmidhuber2006developmental}. A natural hypothesis follows: does the sequence's anti-habituation profile translate to measurable advantages in neural network training?
 
-We make three contributions:
+We test this hypothesis rigorously and find that it does not hold. Across three experiments---learning rate schedule modulation, curriculum ordering, and seed sensitivity analysis---the King Wen sequence either degrades training performance or produces results indistinguishable from noise. We explain the mechanism: the sequence's high variance, which generates its distinctive statistical signature, is counterproductive for gradient-based optimization.
+
+We make four contributions:
 
 \begin{enumerate}
 \tightlist
-\item A mathematical formalization of the sequence's information-theoretic
-properties, including surprise, multi-dimensional distance metrics, and
-pattern similarity measures.
-\item An empirical comparison of the King Wen sequence against three
-baseline orderings (random, natural binary, and Shao Yong), showing that
-it is statistically distinct from all systematic orderings: random-like
-mean surprise, significantly higher variance, and no autocorrelation.
-\item A concrete validation proposal using the OpenSpiel multi-agent
-framework \cite{lanctot2019openspiel}, in which the sequence's
-anti-habituation properties are tested in a historically grounded
-strategy simulation.
+\item An enhanced statistical characterization of the King Wen sequence via 100,000-permutation Monte Carlo analysis, confirming four statistically significant combinatorial properties.
+\item Learning rate schedule modulation experiments showing that the sequence's variance profile degrades training across all tested amplitudes.
+\item Curriculum ordering experiments on two hardware platforms, isolating a \texttt{torch.compile} confound from genuine learning dynamics.
+\item A mechanistic explanation of why anti-habituation statistical properties do not entail training benefit, grounded in the gap between combinatorial structure and optimization dynamics.
 \end{enumerate}
 
 %% ============================================================
@@ -109,252 +58,60 @@ strategy simulation.
 
 \subsection{Curriculum Learning}
 
-Bengio et al.\ \cite{bengio2009curriculum} formalized the intuition that
-training machine learning models in a meaningful order---from simple to
-complex examples---improves convergence and generalization. This mirrors
-how humans and animals learn more effectively when examples are organized
-to illustrate gradually more complex concepts. The framework consists of
-two components: a \emph{difficulty measurer} that scores each training
-sample, and a \emph{training scheduler} that arranges samples into a
-curriculum \cite{wang2021curriculum}.
-
-Graves et al.\ \cite{graves2017automated} extended this to automated
-curriculum learning, using multi-armed bandit algorithms to select which
-training tasks to present to a neural network. The key insight is that
-the \emph{ordering} of training examples matters as much as the examples
-themselves---the same dataset produces different learning outcomes
-depending on the sequence in which it is presented.
-
-We argue that the King Wen sequence represents a pre-computational
-instance of curriculum design: a fixed ordering of 64 states that
-exhibits the properties curriculum learning theory identifies as
-optimal---controlled variation, balanced surprise, and progressive
-complexity.
+Bengio et al.\ \cite{bengio2009curriculum} formalized the intuition that training machine learning models in a meaningful order---from simple to complex examples---improves convergence and generalization. Graves et al.\ \cite{graves2017automated} extended this to automated curriculum learning, using multi-armed bandit algorithms to select training tasks. Wang et al.\ \cite{wang2021curriculum} survey the field, distinguishing difficulty measurers from training schedulers. Recent work has shown that curriculum ordering interacts strongly with learning rate schedules \cite{agarwal2025lrdecay} and that simple difficulty metrics (compression ratio, lexical diversity) are effective at scale \cite{jia2025curriculum}.
 
 \subsection{I-Ching in Computational Intelligence}
 
-The I-Ching's hexagram system has been applied to computational
-optimization in several ways. Chen et al.\ \cite{chen2016iching}
-proposed the I-Ching Divination Evolutionary Algorithm (IDEA), which
-uses hexagram transformation operations (intrication, turnover, mutual)
-as evolutionary operators, demonstrating competitive convergence on
-standard benchmarks. Zhang et al.\ \cite{zhang2021asnas} extended this
-approach to neural architecture search with AS-NAS, applying reinforced
-IDEA to discover efficient network topologies.
-
-These prior works use the I-Ching's \emph{transformation mechanics} as
-algorithmic primitives. Our claim is different: we argue that the King
-Wen \emph{sequence ordering itself}---not the hexagram transformation
-rules---encodes optimization principles. The distinction matters: IDEA
-uses hexagram operations as mutation operators within an evolutionary
-algorithm; we analyze the specific order in which King Wen arranged the
-hexagrams and show that this ordering has measurable curriculum
-properties.
+Chen et al.\ \cite{chen2016iching} proposed the I-Ching Divination Evolutionary Algorithm (IDEA), using hexagram transformation operations as evolutionary operators. Zhang et al.\ \cite{zhang2021asnas} extended this to neural architecture search with AS-NAS. These works use the I-Ching's transformation mechanics as algorithmic primitives. Our investigation is different: we test whether the King Wen sequence ordering itself---not the hexagram transformation rules---has optimization utility.
 
 \subsection{Information-Theoretic Surprise and Optimal Learning}
 
-Information-theoretic surprise---the negative log-probability of an
-observation given a model---has been identified as a key signal for
-optimal learning. Schmidhuber \cite{schmidhuber2006developmental}
-proposed that artificial curiosity should drive agents toward states of
-intermediate surprise: too little surprise indicates redundancy, too
-much indicates noise. Itti and Baldi \cite{itti2009bayesian} formalized
-Bayesian surprise as the KL divergence between prior and posterior
-beliefs, showing that human attention is drawn to surprising stimuli.
+Schmidhuber \cite{schmidhuber2006developmental} proposed that artificial curiosity should drive agents toward states of intermediate surprise. Itti and Baldi \cite{itti2009bayesian} formalized Bayesian surprise as KL divergence between prior and posterior beliefs. Nielsen \cite{Nielsen_2020} provides the information-geometric framework connecting these ideas. We test whether the King Wen sequence's surprise profile---which exhibits properties consistent with these frameworks---produces practical benefits when applied to neural network training.
 
-Nielsen \cite{Nielsen_2020} provides the information-geometric framework
-connecting these ideas: learning trajectories can be analyzed as paths
-through a statistical manifold, where the curvature determines how
-efficiently an agent can update its model. An optimal curriculum would
-trace a path that maintains intermediate surprise---neither stagnating
-in familiar territory nor overwhelming the learner with unrelatable
-novelty.
+\subsection{Value of Negative Results}
 
-We show that the King Wen sequence's transition profile matches this
-prescription: its surprise distribution avoids both extremes and
-exhibits structured oscillation consistent with optimal learning
-pacing.
+Negative results are essential for scientific progress yet remain underreported in machine learning. When a hypothesis has surface plausibility---as the King Wen sequence does, given its genuine statistical properties---rigorous negative results prevent others from pursuing similar dead ends and clarify the boundary between theoretical elegance and practical utility. Our contribution follows this tradition: we test a natural hypothesis with proper controls and report that it fails, with mechanistic explanation.
 
 %% ============================================================
-\section{Key Observations}\label{sec:observations}
+\section{The King Wen Sequence: Statistical Characterization}\label{sec:stats}
 %% ============================================================
 
-The King Wen sequence demonstrates several properties that parallel
-modern learning optimization:
+\subsection{Hexagram Space and Notation}
 
-\subsection{Dynamic Learning Rate Adjustment}
+Each hexagram is a six-bit binary vector representing six lines (yin${}=0$ or yang${}=1$), arranged from bottom to top. The 64 hexagrams span the complete space $\{0,1\}^6$. The King Wen sequence assigns each hexagram a position from 1 to 64 in a traditional ordering. We also consider the Shao Yong ordering (c.\ 1050 AD), which arranges hexagrams by binary value using a reversed-trigram convention, and the natural binary ordering (hexagrams 0--63 by integer value).
+
+\subsection{Transition Metrics}
+
+For consecutive hexagrams $H_i$ and $H_{i+1}$ in a sequence, we measure:
 
 \begin{itemize}
 \tightlist
-\item Non-linear progression between related concepts
-\item Varied step sizes between adjacent hexagrams
-\item Natural handling of learning plateaus through periodic returns to
-      simpler patterns
+\item \textbf{Hamming distance} $d_H(H_i, H_{i+1})$: the number of differing bit positions (range 0--6)
+\item \textbf{Trigram relationship distance}: distance between upper and lower trigram pairs
+\item \textbf{Nuclear hexagram distance}: Hamming distance between the inner four lines (positions 2--5)
 \end{itemize}
 
-\subsection{Multi-Dimensional Pattern Recognition}
-
-\begin{itemize}
-\tightlist
-\item Simultaneous optimization across multiple pattern spaces (line-level,
-      trigram-level, nuclear hexagram-level)
-\item Integration of complementary patterns (paired hexagrams)
-\item Recognition of nested structures via nuclear hexagrams
-\end{itemize}
-
-\subsection{Optimal Information Surprise}
-
-\begin{itemize}
-\tightlist
-\item Balanced progression between familiar and novel patterns
-\item Natural avoidance of local minima through pattern jumps
-\item Returns to basic patterns at deeper levels of understanding
-\end{itemize}
-
-%% ============================================================
-\section{Mathematical Formalization}\label{sec:math}
-%% ============================================================
-
-\subsection{Information-Theoretic Surprise}
-
-For adjacent hexagrams in a sequence, we quantify surprise as:
-
+We define information-theoretic surprise as:
 \begin{equation}
-S(H_i, H_{i+1}) = -\log P(H_{i+1}|H_i)
+S(H_i, H_{i+1}) = -\log P(H_{i+1} \mid H_i)
 \end{equation}
+where conditional probability is modeled via pattern similarity incorporating traditional line position weights $[0.03, 0.07, 0.15, 0.20, 0.25, 0.30]$ from bottom to top, with yang-to-yin transitions weighted at $0.7\times$ the reverse. Total similarity combines external (line-level) and internal (nuclear hexagram) components with $\lambda = 0.4$ weighting the nuclear component.
 
-where $H_i$ represents hexagram $i$ in the sequence. We model the
-conditional probability using pattern similarity (Section~\ref{sec:similarity}):
-a highly similar successor has high probability (low surprise), while a
-dissimilar successor has low probability (high surprise). An optimal
-curriculum maintains surprise within bounds:
+\subsection{Monte Carlo Permutation Analysis}
 
-\begin{equation}
-S_{\text{min}} < S(H_i, H_{i+1}) < S_{\text{max}}
-\end{equation}
+We compare the King Wen sequence against 100,000 random permutations of the same 64 hexagrams. Four properties are statistically significant:
 
-where $S_{\text{min}}$ represents stagnation (no new information) and
-$S_{\text{max}}$ represents cognitive overload.
+\textbf{1.\ Higher-than-random transition distance (98.2nd percentile).} Mean Hamming distance between consecutive hexagrams: 3.35 (random mean: 3.05, $\sigma = 0.15$). The sequence deliberately maximizes change between consecutive states.
 
-\subsection{Multi-Dimensional Distance Metric}
+\textbf{2.\ Negative lag-1 autocorrelation (3.7th percentile, $p = 0.037$).} Autocorrelation of Hamming distances at lag 1: $-0.251$ (random mean: $-0.032$, $\sigma = 0.124$). A large transition is systematically followed by a small one and vice versa. This alternation between dramatic and subtle change is actively constructed, not a property of random permutations.
 
-For each hexagram transition, we define a composite distance:
+\textbf{3.\ Yang-balanced groups of four (99.8th percentile, $p = 0.002$).} Seven out of 16 groups of four consecutive hexagrams have exactly 12 yang lines (perfect yin-yang balance). Random expectation: 2.6 ($\sigma = 1.5$). The sequence maintains energetic equilibrium at the 4-hexagram scale.
 
-\begin{equation}
-D(H_i, H_{i+1}) = \alpha_1 d_1(H_i, H_{i+1}) + \alpha_2 d_2(H_i, H_{i+1}) + \alpha_3 d_3(H_i, H_{i+1})
-\end{equation}
+\textbf{4.\ Within-pair vs.\ between-pair asymmetry (99.2nd percentile).} Within-pair mean Hamming distance: 3.56. Between-pair: 2.94. Asymmetry: 0.63. Paired hexagrams are maximally different from each other (complement/inverse), while transitions between pairs are smoother---creating tension within pairs and resolution between them.
 
-where:
-\begin{itemize}
-\item $d_1$: Hamming distance between six-line binary representations
-\item $d_2$: Trigram relationship distance (upper and lower trigrams compared independently)
-\item $d_3$: Nuclear hexagram distance (Hamming distance between inner four lines, positions 2--5)
-\item $\alpha_1, \alpha_2, \alpha_3$: Weighting coefficients
-\end{itemize}
+\subsection{Comparison with Systematic Orderings}
 
-\subsection{Pattern Similarity}\label{sec:similarity}
-
-Pattern similarity incorporates traditional I-Ching line position
-semantics. Each line position carries a weight reflecting its role
-in the hexagram's structure:
-
-\begin{equation}
-w = [0.03, 0.07, 0.15, 0.20, 0.25, 0.30]
-\end{equation}
-
-where index 0 corresponds to the bottom line (Earth/Receptive) and
-index 5 to the top line (Heaven/Creative). Yang-to-yin transitions
-($1 \to 0$) are weighted at $0.7\times$ the reverse, reflecting the
-traditional asymmetry between these transformations.
-
-The total similarity combines external (line-level) and internal
-(nuclear hexagram) components:
-
-\begin{equation}
-\text{sim}(H_i, H_j) = (1 - \lambda) \cdot \text{sim}_{\text{ext}}(H_i, H_j) + \lambda \cdot \text{sim}_{\text{nuc}}(H_i, H_j)
-\end{equation}
-
-where $\lambda = 0.4$ weights the nuclear component. The full
-implementation is available in the project
-repository.\footnote{\url{https://github.com/augchan42/king-wen-agi-framework}}
-
-%% ============================================================
-\section{Empirical Analysis}\label{sec:empirical}
-%% ============================================================
-
-\subsection{Baseline Orderings}
-
-To test whether the King Wen sequence's properties are unique or
-shared by any deliberate ordering, we compare it against three
-baselines:
-
-\begin{enumerate}
-\tightlist
-\item \textbf{Random orderings:} 1,000 random permutations of the 64
-hexagrams. The mean and 95\% confidence interval of each metric across
-these permutations constitutes the null hypothesis.
-\item \textbf{Natural binary ordering:} Hexagrams ordered 0--63 by their
-binary value. This is the simplest possible systematic ordering.
-\item \textbf{Shao Yong ordering} (c.\ 1050 AD): The other historically
-significant arrangement, which follows a binary tree structure. This is
-the most important baseline because it tests whether \emph{any}
-deliberate non-random ordering exhibits curriculum properties.
-\end{enumerate}
-
-\subsection{Metrics}
-
-For each ordering, we compute the following over all 63 consecutive
-transitions:
-
-\begin{itemize}
-\tightlist
-\item Hamming distance distribution
-\item Pattern similarity distribution (using the weighted metric from Section~\ref{sec:similarity})
-\item Information-theoretic surprise distribution
-\item Variance of surprise
-\item Autocorrelation of surprise at lags 1--5
-\end{itemize}
-
-\subsection{Statistical Tests}
-
-\begin{itemize}
-\tightlist
-\item \textbf{Kolmogorov-Smirnov test:} Is the King Wen surprise
-distribution significantly different from each baseline?
-\item \textbf{Levene's test:} Does King Wen's surprise variance differ
-significantly from each baseline?
-\item \textbf{Ljung-Box test:} Does the surprise sequence exhibit
-significant autocorrelation?
-\end{itemize}
-
-\subsection{Results}
-
-Figure \ref{fig:metrics} shows the King Wen sequence's transition
-metrics. Figure \ref{fig:comparison} compares the surprise profiles of
-all four orderings. The analysis code is available in
-\texttt{generate\_plots.py}.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{king_wen_metrics.pdf}
-\caption{Analysis of King Wen sequence transitions. Top: Hamming
-distances between consecutive hexagrams. Middle: Pattern similarities
-incorporating traditional I-Ching line position weights. Bottom:
-Information-theoretic surprise measures.}
-\label{fig:metrics}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{king_wen_comparison.pdf}
-\caption{Surprise profiles across four orderings. Top left: King Wen
-sequence. Top right: mean of 1,000 random permutations with 95\% CI.
-Bottom left: natural binary ordering (0--63). Bottom right: Shao Yong
-ordering (c.\ 1050 AD). All panels share the same y-axis scale.}
-\label{fig:comparison}
-\end{figure}
-
-Table \ref{tab:stats} summarizes the surprise distribution statistics.
+We compare the surprise distributions of four orderings across all 63 consecutive transitions (Table~\ref{tab:stats}).
 
 \begin{table}[h]
 \centering
@@ -362,7 +119,7 @@ Table \ref{tab:stats} summarizes the surprise distribution statistics.
 \toprule
 \textbf{Ordering} & \textbf{Mean} & \textbf{Std} & \textbf{Variance} & \textbf{Range} \\
 \midrule
-King Wen    & 0.781 & 0.599 & 0.359 & 0.15--2.30 \\
+King Wen    & 0.842 & 0.624 & 0.390 & 0.16--2.30 \\
 Random (mean of 1000) & 0.711 & 0.453 & 0.202 & 0.11--2.30 \\
 Binary      & 0.482 & 0.403 & 0.162 & 0.20--1.75 \\
 Shao Yong   & 0.270 & 0.348 & 0.121 & 0.11--2.07 \\
@@ -372,391 +129,283 @@ Shao Yong   & 0.270 & 0.348 & 0.121 & 0.11--2.07 \\
 \label{tab:stats}
 \end{table}
 
-The results reveal a more nuanced picture than a simple ``controlled
-pacing'' interpretation would suggest:
+\textbf{Distribution shape (Kolmogorov-Smirnov test):} King Wen is not significantly different from random ($D = 0.11$, $p = 0.44$), but is highly significantly different from binary ($D = 0.46$, $p < 0.001$) and Shao Yong ($D = 0.73$, $p < 0.001$).
 
-\textbf{Distribution shape.} The Kolmogorov-Smirnov test shows that
-the King Wen surprise distribution is \emph{not} significantly different
-from random orderings ($D = 0.10$, $p = 0.52$), but is highly
-significantly different from both the binary ordering ($D = 0.41$,
-$p < 0.001$) and the Shao Yong ordering ($D = 0.70$, $p < 0.001$).
-The King Wen sequence samples from the same range of surprise values
-as a random ordering---but the way it arranges them is not random.
+\textbf{Variance (Levene's test):} King Wen has significantly higher variance than random ($p = 0.009$) and Shao Yong ($p < 0.001$). The difference versus binary is marginal ($p = 0.053$).
 
-\textbf{Variance.} Levene's test shows that King Wen has
-\emph{significantly higher} variance than all three baselines
-($p = 0.01$ vs.\ random, $p = 0.04$ vs.\ binary, $p < 0.001$
-vs.\ Shao Yong). Rather than constraining surprise to a narrow band,
-the King Wen sequence deliberately uses the full range of available
-surprise values---from near-zero (consolidation) to the theoretical
-maximum (radical novelty).
+\textbf{Autocorrelation (Ljung-Box, lag 5):} King Wen shows no significant autocorrelation ($p = 0.45$), while binary ($p < 0.001$) and Shao Yong ($p = 0.002$) are highly autocorrelated. Only 3.9\% of random permutations show significant autocorrelation.
 
-\textbf{Autocorrelation.} This is the most striking finding. The
-Ljung-Box test at lag 5 shows that the King Wen sequence exhibits
-\emph{no significant autocorrelation} ($p = 0.11$), while both the
-binary ordering ($p < 0.001$) and Shao Yong ordering ($p = 0.002$)
-are highly autocorrelated. Only 3.9\% of random permutations show
-significant autocorrelation. The King Wen sequence's surprise rhythm
-is unpredictable---it avoids the repetitive patterns inherent in
-algebraically constructed orderings while maintaining a mean surprise
-level comparable to random orderings.
+\subsection{Summary}
 
-\subsection{Interpretation}
-
-The King Wen sequence does not implement a smooth, monotonically
-increasing curriculum in the sense of Bengio et al.\
-\cite{bengio2009curriculum}. Instead, it implements something more
-consistent with \emph{maximally varied exploration}: wide surprise
-range, no autocorrelation, and deliberate avoidance of the repetitive
-patterns that characterize other systematic orderings.
-
-This is compatible with Schmidhuber's artificial curiosity framework
-\cite{schmidhuber2006developmental}, which predicts that optimal
-learning trajectories seek \emph{intermediate} surprise on average
-while avoiding predictability. The King Wen sequence's mean surprise
-(0.78) is close to the random mean (0.71), but it achieves this
-without the autocorrelation structure that would make the sequence
-predictable. Where binary and Shao Yong orderings produce surprise
-patterns a learner could anticipate and tune out, the King Wen
-sequence resists habituation.
-
-This reframes our hypothesis: the King Wen sequence is not a
-\emph{graduated} curriculum but an \emph{anti-habituation} curriculum.
-It maintains the learner's attention by being locally unpredictable
-while globally covering the full surprise spectrum. This is closer to
-the stochastic curricula studied by Graves et al.\
-\cite{graves2017automated}, where optimal training order is neither
-strictly easy-to-hard nor random, but adapted to maintain maximal
-learning signal.
+The King Wen sequence is neither random nor algebraically systematic. It occupies a distinctive position: random-like mean surprise, significantly higher variance, negative lag-1 autocorrelation, and local yang balance. These properties are real and confirmed against rigorous baselines. Whether they are useful for optimization is a separate, empirical question---addressed in the next section.
 
 %% ============================================================
-\section{Relationship to Modern Learning Theory}\label{sec:learning-theory}
+\section{Experimental Evaluation}\label{sec:experiments}
 %% ============================================================
 
-The sequence's measurable properties map onto several contemporary
-machine learning concepts:
+We test the hypothesis that the King Wen sequence's anti-habituation properties improve neural network training. We conduct three experiments using Karpathy's autoresearch framework, which runs fixed-duration (5-minute) training experiments on a small GPT language model and evaluates using validation bits per byte (val\_bpb; lower is better).
 
-\subsection{Curriculum Learning}
+\subsection{Experimental Setup}
 
-The King Wen sequence's controlled surprise profile directly implements
-the core principle of curriculum learning \cite{bengio2009curriculum}:
-presenting training examples in an order that progresses from familiar
-to novel. The sequence acts as both difficulty measurer (via the distance
-metric) and training scheduler (via the fixed ordering), the two
-components identified by Wang et al.\ \cite{wang2021curriculum} as
-constituting a curriculum.
+\textbf{Model.} GPT with rotary position embeddings (RoPE), sliding window attention, and a hybrid optimizer (Muon for matrix parameters, AdamW for embeddings and scalars). Default configuration: DEPTH${}=4$ (${\sim}11.5$M parameters), MAX\_SEQ\_LEN${}=2048$, vocabulary size 8192.
 
-\subsection{Gradient Descent Optimization}
+\textbf{Dataset.} ClimbMix-400B, prepared with best-fit packing and BPE tokenization.
 
-\begin{itemize}
-\tightlist
-\item Natural handling of local minima through pattern jumps (large
-      Hamming distance transitions that escape nearby states)
-\item Dynamic adjustment of effective learning rate via varied step sizes
-\item Multi-objective optimization across line, trigram, and nuclear
-      dimensions simultaneously
-\end{itemize}
+\textbf{Platforms.} (1) NVIDIA RTX 2060 (6\,GB VRAM) with PyTorch and \texttt{torch.compile}. (2) MacBook Pro with 96\,GB unified memory, Apple Silicon, MLX framework.
 
-\subsection{Meta-Learning}
+\textbf{Metric.} Validation bits per byte (val\_bpb), vocabulary-size-independent and architecture-independent (lower is better). All experiments use the same evaluation shard and token count.
 
-The self-referential structure of the sequence---where nuclear hexagrams
-create recursive patterns within patterns---parallels the ``learning to
-learn'' principle of modern meta-learning
-\cite{finn2017modelagnosticmetalearningfastadaptation}:
+\textbf{Time budget.} Fixed 300-second training budget per run. Curriculum overhead (difficulty scoring, buffer sorting, refill) counts against this budget.
 
-\begin{itemize}
-\tightlist
-\item Self-referential learning patterns via nuclear hexagrams
-\item Integration of opposing concepts via paired hexagrams
-\item Recursive pattern recognition across multiple structural levels
-\end{itemize}
+\subsection{Experiment 1: Learning Rate Schedule Modulation}
 
-\subsection{Developmental Learning}
+We apply the King Wen sequence's surprise profile as a multiplicative modulation on the learning rate schedule. The 63 inter-hexagram surprise values are cycled across training steps, scaling the base learning rate by $(1 + A \cdot s_i)$ where $A$ is the amplitude and $s_i \in [-1, 1]$ is the centered surprise value. We test three amplitudes (0.15, 0.3, 0.5) against two controls: random perturbation (pseudo-random values at the same amplitude) and Shao Yong ordering (highly autocorrelated sawtooth pattern).
 
-The sequence's progressive complexity mirrors developmental learning
-frameworks \cite{schmidhuber2006developmental}:
+All runs use identical configuration: 4-layer GPT, standard warmup/warmdown LR envelope, RTX 2060, seed 42.
 
-\begin{itemize}
-\tightlist
-\item Progressive complexity increase over the sequence
-\item Natural curriculum pacing with periodic consolidation
-\item Balanced exploration-exploitation via surprise oscillation
-\end{itemize}
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Schedule} & \textbf{val\_bpb} & \textbf{vs.\ Baseline} \\
+\midrule
+Baseline (no modulation) & 1.753 & --- \\
+Random perturbation (amp${}=0.3$) & 1.731 & $-0.023$ \\
+Shao Yong (amp${}=0.3$) & 1.732 & $-0.021$ \\
+King Wen (amp${}=0.15$) & 1.777 & $+0.024$ \\
+King Wen (amp${}=0.3$) & 1.785 & $+0.032$ \\
+King Wen (amp${}=0.5$) & 1.790 & $+0.036$ \\
+\bottomrule
+\end{tabular}
+\caption{LR schedule modulation results. King Wen degrades performance at all amplitudes.}
+\label{tab:lr}
+\end{table}
+
+\textbf{Finding.} King Wen LR modulation degrades performance at all amplitudes tested (Table~\ref{tab:lr}). The degradation increases monotonically with amplitude. Both control perturbations show marginal improvements at the same amplitude, though as Section~\ref{sec:seeds} shows, these fall within natural seed variance.
+
+\subsection{Experiment 2: Curriculum Ordering}
+
+We reframe King Wen as a data ordering strategy rather than an LR modulator. Training batches are buffered (64 micro-batches), scored by a difficulty metric, and reordered. For the King Wen ordering, batches are mapped by rank: the batch at difficulty rank $k$ is placed at the King Wen position with surprise rank $k$.
+
+Two difficulty metrics were used: token diversity (ratio of unique tokens to total tokens per batch) for initial CUDA experiments, and compression ratio (gzip compressed size / original size) for MLX and CUDA replication experiments.
+
+\subsubsection{CUDA Results (RTX 2060, DEPTH=4, Token Diversity)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Ordering} & \textbf{val\_bpb} & \textbf{vs.\ Sequential} \\
+\midrule
+Sequential (no buffer) & 1.719 & --- \\
+Buffered passthrough & 1.680 & $-0.039$ \\
+\textbf{Random shuffle} & \textbf{1.614} & $\mathbf{-0.106}$ \\
+Easy-to-hard & 1.632 & $-0.087$ \\
+Hard-to-easy & 1.627 & $-0.092$ \\
+Shao Yong & 1.638 & $-0.081$ \\
+King Wen & 1.662 & $-0.057$ \\
+\bottomrule
+\end{tabular}
+\caption{CUDA curriculum ordering results. Random shuffle wins; King Wen is worst non-sequential.}
+\label{tab:cuda}
+\end{table}
+
+All reorderings beat sequential (Table~\ref{tab:cuda}), but random shuffle wins. King Wen is the worst non-sequential ordering. The buffered passthrough control (buffering without reordering) itself improves performance by 0.039\,bpb, suggesting that the dataloader's best-fit packing creates sequential correlation that any disruption helps break.
+
+\subsubsection{MLX Results (Apple Silicon, DEPTH=4, Compression Ratio)}
+
+We repeat the experiment on MLX with five orderings (Shao Yong dropped as structurally similar to easy-to-hard). Two LR regimes are tested: standard warmdown and constant LR, following the finding that LR decay can suppress curriculum benefits \cite{agarwal2025lrdecay}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Ordering} & \textbf{Standard WD} & \textbf{Constant LR} \\
+\midrule
+Sequential & 1.732 & 1.722 \\
+Random & 1.713 & 1.697 \\
+Easy-to-hard & 1.695 & 1.731 \\
+Hard-to-easy & 1.709 & 1.707 \\
+King Wen & 1.724 & 1.729 \\
+\bottomrule
+\end{tabular}
+\caption{MLX DEPTH${}=4$ curriculum results. Noise floor: $\pm 0.060$\,bpb. No significant differences.}
+\label{tab:mlx4}
+\end{table}
+
+Noise floor (3-seed range at DEPTH${}=4$): $\pm 0.060$\,bpb. \textbf{No ordering achieves a statistically significant improvement over sequential on MLX} (Table~\ref{tab:mlx4}). All differences fall within the measured noise floor.
+
+\subsubsection{MLX Results (Apple Silicon, DEPTH=6)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Ordering} & \textbf{Standard WD} & \textbf{Constant LR} \\
+\midrule
+Sequential & 2.056 & 2.039 \\
+Random & 2.047 & 2.056 \\
+Easy-to-hard & 2.099 & 2.079 \\
+Hard-to-easy & 2.084 & 2.095 \\
+King Wen & 2.074 & 2.030 \\
+\bottomrule
+\end{tabular}
+\caption{MLX DEPTH${}=6$ curriculum results. Noise floor: $\pm 0.043$\,bpb.}
+\label{tab:mlx6}
+\end{table}
+
+Noise floor at DEPTH${}=6$: $\pm 0.043$. King Wen achieves 2.030 under constant LR (Table~\ref{tab:mlx6}), a delta of $-0.044$, marginally outside noise, but this is a single run and does not replicate the CUDA pattern.
+
+\subsubsection{Cross-Platform Analysis}
+
+The large curriculum effect observed on CUDA (${\sim}0.04$--$0.11$\,bpb) does not replicate on MLX. The most likely explanation is that \texttt{torch.compile} creates kernel-level optimization patterns that overfit to sequential data ordering. Buffering disrupts this optimization, and random shuffling maximizes the disruption. This is a framework-specific artifact, not a property of the learning dynamics. The decorrelation benefit (breaking best-fit packing correlation) is real (${\sim}0.038$\,bpb from buffered passthrough) but is not King Wen-specific.
+
+\subsection{Experiment 3: Seed Sensitivity Analysis}\label{sec:seeds}
+
+To establish whether any of the above results exceed natural variance, we train 30 models with different random seeds (0--29) on the identical baseline configuration (4-layer GPT, standard LR schedule, RTX 2060, 5-minute budget).
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\toprule
+\textbf{Statistic} & \textbf{Value} \\
+\midrule
+Range & 1.732--1.773 \\
+Mean & 1.756 \\
+Std & 0.009 \\
+CV & 0.51\% \\
+\bottomrule
+\end{tabular}
+\caption{val\_bpb across 30 random seeds. Natural variance range: 0.041\,bpb.}
+\label{tab:seeds}
+\end{table}
+
+The seed sweep (Table~\ref{tab:seeds}) reveals that the ``improvements'' from random perturbation ($-0.023$) and Shao Yong ($-0.021$) in Experiment 1 fall within the natural seed variance range of 0.041\,bpb. Only King Wen's degradation ($+0.032$) is statistically meaningful---it exceeds the upper bound of observed seed variation.
+
+Behavioral analysis of generated text across all 30 seeds (150 samples per seed, 4,500 total) shows that between-seed variance ratios are below 0.21 on all 12 metrics measured. PCA reveals a single ``verbosity axis'' (PC1 $= 66.4\%$ of between-seed variance), not multi-dimensional behavioral traits. Seeds produce quantitatively similar models at this scale.
+
+\subsection{Discussion: Why Anti-Habituation Does Not Help}
+
+The King Wen sequence's statistically significant properties---high transition distance, negative autocorrelation, full-spectrum variance---are precisely what make it harmful for gradient-based optimization:
+
+\textbf{Excessive variance destabilizes gradient updates.} The sequence's defining statistical feature is higher variance than random permutations (Section~\ref{sec:stats}). When applied as LR modulation, this means larger effective perturbation magnitude than random noise at the same nominal amplitude.
+
+\textbf{Negative autocorrelation prevents optimization momentum.} Shao Yong's highly autocorrelated pattern allows the optimizer to make consistent progress at a stable effective learning rate for several steps. King Wen is constructed to never repeat---each step reverses the previous step's intensity. This actively disrupts the temporal coherence that optimizers rely on.
+
+\textbf{Anti-habituation is premature at small scale.} A 4-layer model trained for 5 minutes is in rapid early learning, far from the convergence plateau where habituation-breaking interventions might help. Disrupting a learner that hasn't plateaued simply slows it down.
+
+\textbf{Fixed sequences cannot adapt.} Effective curriculum learning requires adaptation to learner state \cite{graves2017automated}. The King Wen sequence is a 3,000-year-old fixed ordering that cannot respond to the model's current loss landscape. Simple adaptive approaches---even random shuffling---outperform any fixed ordering because they do not impose incorrect assumptions about the learning trajectory.
+
+\textbf{Framework artifacts confound curriculum evaluation.} The large CUDA curriculum effect (${\sim}0.11$\,bpb for random shuffle) disappears on MLX, revealing that \texttt{torch.compile}'s kernel optimization interacts with data ordering in ways that masquerade as learning dynamics. This is an important methodological finding: curriculum ordering experiments must be validated across frameworks, not just seeds.
 
 %% ============================================================
 \section{Implications}\label{sec:implications}
 %% ============================================================
 
-The King Wen sequence encodes not a graduated curriculum but an
-anti-habituation curriculum: a fixed ordering that resists predictability
-while covering the full surprise spectrum. This has direct implications
-for modern machine learning:
+\textbf{For I-Ching studies.} The King Wen sequence has genuine combinatorial structure confirmed by Monte Carlo analysis. The four statistically significant properties---especially the yang-balanced groups ($p = 0.002$) and negative autocorrelation ($p = 0.037$)---are mathematical findings about a historically important object, independent of any ML application.
 
-\begin{itemize}
-\tightlist
-\item \textbf{Anti-habituation schedules:} The sequence's lack of
-autocorrelation suggests that optimal training order should resist
-predictability. Learning rate schedules that oscillate unpredictably
-may outperform monotonic decay by preventing the optimizer from
-habituating to a fixed pacing.
-\item \textbf{Local minima escape:} The high-variance surprise profile
-means the sequence regularly introduces radical novelty (surprise $>$ 2.0)
-interspersed with consolidation (surprise $<$ 0.2). These jumps provide
-a natural mechanism for escaping local minima.
-\item \textbf{Multi-dimensional curricula:} The simultaneous optimization
-across line, trigram, and nuclear distances suggests that effective
-curricula operate on multiple feature dimensions, not a single
-difficulty axis.
-\item \textbf{Full-spectrum exploration:} Rather than budgeting surprise
-within narrow bounds, the King Wen sequence uses the entire available
-range. This is consistent with Graves et al.'s finding
-\cite{graves2017automated} that optimal automated curricula are
-neither strictly easy-to-hard nor random.
-\end{itemize}
+\textbf{For curriculum learning.} Fixed ordering curricula, even those with theoretically appealing statistical properties, do not substitute for adaptive curricula at the scales tested. The gap between combinatorial elegance and optimization utility is wide.
+
+\textbf{For experimental methodology.} The \texttt{torch.compile} confound demonstrates that curriculum ordering experiments must be validated across frameworks. The 30-seed sweep (Section~\ref{sec:seeds}) provides a reusable template for distinguishing genuine effects from seed noise.
+
+\textbf{For reproducibility.} All experiments use a fixed 5-minute time budget with val\_bpb as the single metric, making results directly comparable. The autoresearch framework's edit-train-evaluate loop provides a lightweight, reproducible experimental pipeline for testing training hypotheses.
 
 %% ============================================================
-\section{Minimal Validation: Anti-Habituation LR Schedule}\label{sec:minimal}
+\section{Limitations}\label{sec:limitations}
 %% ============================================================
 
-Before building a full multi-agent simulation, the anti-habituation
-hypothesis can be tested directly on a standard neural network training
-task by applying the King Wen sequence's surprise profile as a learning
-rate schedule modulation.
+Our experiments are conducted at small scale: ${\sim}11.5$M parameter models trained for 5 minutes on a single GPU. Curriculum learning effects in the literature are typically demonstrated at 1B+ parameter scale with longer training. It is possible that King Wen's anti-habituation properties could help at larger scale, where models are more likely to reach convergence plateaus where habituation-breaking is relevant. However, the LR modulation results (Section~\ref{sec:experiments}) show degradation that increases with amplitude, not a marginal effect that might reverse at scale. The mechanistic explanation---excessive variance and negative autocorrelation disrupting gradient coherence---applies at any scale.
 
-\subsection{Experiment Design}
-
-We use a single-GPU language model training setup (following
-Karpathy's autoresearch framework) with a fixed 5-minute time budget
-per run. The only experimental variable is the learning rate schedule.
-The model architecture, optimizer, data, and evaluation are held
-constant.
-
-The standard schedule uses a monotonic warmup $\to$ constant $\to$
-warmdown envelope. We modulate this envelope by the King Wen
-sequence's normalized surprise values, mapping training progress
-$[0, 1]$ to the 63 transition surprise values:
-
-\begin{equation}
-\text{lr}(t) = \text{envelope}(t) \cdot \left(1 + A \cdot (2 \cdot s_{\lfloor 63t \rfloor} - 1)\right)
-\end{equation}
-
-where $\text{envelope}(t)$ is the standard warmup/warmdown schedule,
-$A$ is the perturbation amplitude, and $s_i \in [0,1]$ is the
-normalized King Wen surprise at transition $i$.
-
-\subsection{Controls}
-
-Three controls isolate the anti-habituation effect:
-
-\begin{enumerate}
-\tightlist
-\item \textbf{Standard baseline:} Unmodified monotonic schedule
-\item \textbf{Random perturbation:} Same amplitude $A$, but with
-pseudo-random modulation values. Tests whether \emph{any}
-perturbation helps.
-\item \textbf{Shao Yong perturbation:} Same amplitude $A$, but with
-a sawtooth pattern mimicking the Shao Yong ordering's highly
-autocorrelated surprise profile. Tests whether \emph{structured
-but predictable} perturbation helps.
-\end{enumerate}
-
-\subsection{Predictions}
-
-If the anti-habituation hypothesis is correct:
-
-\begin{itemize}
-\tightlist
-\item King Wen schedule achieves lower validation loss than standard
-baseline (the modulation prevents optimizer habituation)
-\item King Wen outperforms random perturbation (the specific surprise
-profile matters, not just noise)
-\item King Wen outperforms Shao Yong perturbation (unpredictability
-matters; a learnable modulation pattern is tuned out)
-\end{itemize}
-
-This experiment requires approximately 1 hour of single-GPU compute
-(12 runs of 5 minutes each). The experiment code is available in
-the project
-repository.\footnote{\url{https://github.com/augchan42/king-wen-agi-framework/tree/main/experiment}}
-
-%% ============================================================
-\section{Extended Validation: OpenSpiel Simulation}\label{sec:validation}
-%% ============================================================
-
-To test whether the King Wen sequence's curriculum properties confer
-practical advantage, we propose a multi-agent simulation of China's
-Warring States period (475--221 BC) using the OpenSpiel framework
-\cite{lanctot2019openspiel}.
-
-\subsection{Game Formulation}
-
-The simulation is modeled as a 7-player extensive-form game with
-simultaneous diplomatic phases, implemented as a custom OpenSpiel
-environment:
-
-\begin{itemize}
-\tightlist
-\item \textbf{State space:} Territory control, military strength,
-active alliances, resource levels
-\item \textbf{Action space:} Military moves, diplomatic proposals
-(ally, betray, negotiate), internal policy decisions
-\item \textbf{Turn structure:} Simultaneous diplomatic phase followed
-by sequential military resolution
-\end{itemize}
-
-\subsection{Experimental Design}
-
-Two concurrent simulations run in parallel:
-
-\begin{table}[h]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Simulation} & \textbf{Han's Learning Method} & \textbf{Other 6 States} \\
-\midrule
-Control & Standard RL (CFR/PPO) & Standard RL (CFR/PPO) \\
-Test    & King Wen-informed learning & Standard RL (CFR/PPO) \\
-\bottomrule
-\end{tabular}
-\caption{Experimental configuration. All agents share identical
-objective functions, game mechanics, and starting positions. The sole
-variable is Han's learning optimization method.}
-\label{tab:experiment}
-\end{table}
-
-All agents share the same objective function, game mechanics, and
-starting positions. The sole experimental variable is the learning
-optimization method used by the state of Han.
-
-Han is chosen as the test subject because it represents the
-maximum-difficulty case: the smallest territory, poorest resources,
-most constrained geography (boxed in by Qin, Wei, and Chu), and
-historically the first state to fall (230 BC). If King Wen-informed
-learning produces measurable improvement under these conditions, the
-signal is strong.
-
-\subsection{Agent Architecture}
-
-Control agents use standard reinforcement learning---either
-counterfactual regret minimization (CFR) or proximal policy optimization
-(PPO), both well-supported in OpenSpiel. The King Wen Han agent uses
-the same base algorithm, but its learning rate schedule and
-exploration-exploitation balance are governed by the King Wen sequence
-rather than standard annealing:
-
-\begin{itemize}
-\tightlist
-\item Game state is mapped to a hexagram via a hash of key state
-features (territory count, alliance count, military ratio, threat
-level) modulo 64
-\item The King Wen sequence position of that hexagram determines the
-agent's current curriculum stage
-\item The transition distance to the next hexagram in the sequence
-modulates the learning rate and exploration parameter
-\end{itemize}
-
-This is the simplest credible oracle interface. We note two richer
-alternatives for future work: the Meihua Yishu (Plum Blossom method),
-which maps real-world situations to trigrams via temporal and spatial
-features; and the Jiaoshi Yilin, whose 4,096 hexagram-to-hexagram
-transformation poems map every possible state transition and could
-serve as a more expressive decision oracle.
-
-\subsection{Metrics and Statistical Analysis}
-
-We measure a basket of outcomes across $N$ runs (target: 50--100 per
-configuration):
-
-\begin{itemize}
-\tightlist
-\item Survival duration (turns before elimination)
-\item Territory held over time (area under curve)
-\item Alliance stability (mean alliance duration) and count
-\item Final ranking among seven states
-\end{itemize}
-
-Statistical analysis uses:
-
-\begin{itemize}
-\tightlist
-\item Mann-Whitney U test for each metric (non-parametric comparison
-of control vs.\ test Han distributions)
-\item Cohen's $d$ for effect size quantification
-\item Learning curves: metric vs.\ run number to distinguish ``learns
-faster'' (earlier convergence) from ``makes better decisions'' (higher
-asymptotic performance)
-\end{itemize}
-
-Any statistically significant improvement of King Wen Han over control
-Han, across multiple measures and multiple runs, supports the
-hypothesis. The specific emergent strategy---whether Han survives
-through defensive depth, alliance networks, or diplomatic
-unification---is not prescribed but left to emerge from the simulation.
-
-\subsection{Open Questions}
-
-Several design questions remain:
-
-\begin{itemize}
-\tightlist
-\item \textbf{Oracle interface richness:} The hash-modulo mapping is
-minimal. Does a richer oracle (Meihua Yishu, Jiaoshi Yilin) produce
-stronger results, or does the curriculum structure alone suffice?
-\item \textbf{Weighting robustness:} The distance metric's weighting
-coefficients ($\alpha_1, \alpha_2, \alpha_3$) are chosen, not derived.
-Results should be tested across multiple weight configurations to assess
-sensitivity.
-\item \textbf{Learning speed vs.\ decision quality:} Does King Wen help
-the agent converge faster or make better decisions at each step?
-Learning curve analysis across runs can distinguish these.
-\item \textbf{Generalization:} Do the results hold for agents other
-than Han? Testing with Yan (another weak state) or Chu (a strong state)
-would assess whether the curriculum advantage is difficulty-dependent.
-\end{itemize}
+The \texttt{torch.compile} confound means our CUDA curriculum results reflect framework behavior, not pure learning dynamics. We address this by reporting both platforms, but the MLX null result means we lack a platform where curriculum ordering shows large, genuine effects against which to test King Wen.
 
 %% ============================================================
 \section{Conclusion}\label{sec:conclusion}
 %% ============================================================
 
-The King Wen sequence is statistically distinct from both algebraically
-constructed orderings (binary, Shao Yong) and from random permutations
-in a specific and surprising way: it achieves random-like mean surprise
-with significantly higher variance and no autocorrelation---avoiding the
-repetitive patterns inherent in systematic orderings while deliberately
-using the full spectrum of available surprise values. This is not what a
-smooth, graduated curriculum looks like. It is what an anti-habituation
-curriculum looks like: locally unpredictable, globally comprehensive.
+The King Wen sequence has statistically significant combinatorial properties. Monte Carlo analysis against 100,000 random permutations confirms four distinctive features: high transition distance, negative lag-1 autocorrelation, local yang balance, and pair-level asymmetry. These are not artifacts---they reflect genuine structure in a 3,000-year-old ordering of 64 binary states.
 
-This finding reframes the relationship between the King Wen sequence and
-modern machine learning. The sequence does not anticipate Bengio et al.'s
-easy-to-hard curriculum so much as Graves et al.'s stochastic automated
-curricula and Schmidhuber's curiosity-driven exploration. It encodes a
-progression through 64 states of a six-dimensional binary space that
-resists habituation at each step---a 3,000-year-old solution not to the
-curriculum ordering problem, but to the attention maintenance problem.
+These properties do not translate to neural network training benefit. Learning rate modulation with the King Wen surprise profile degrades performance at all tested amplitudes. Curriculum ordering using the sequence is the worst non-sequential ordering on one platform and indistinguishable from noise on another. A 30-seed sweep confirms that only King Wen's degradation exceeds natural variance.
 
-Whether these properties were intentionally designed or emerged from
-centuries of divinatory practice remains an open question. What is
-testable is whether the sequence's anti-habituation properties produce
-measurable advantages in a controlled setting. The proposed OpenSpiel
-simulation offers exactly this test: a historically grounded,
-multi-agent environment where King Wen-informed learning can be compared
-against standard reinforcement learning across repeated trials with
-concrete outcome metrics.
+The central lesson is the gap between ``statistically interesting'' and ``useful for optimization.'' The King Wen sequence's high variance and negative autocorrelation---the properties that make it combinatorially distinctive---are counterproductive for gradient-based learning, which benefits from temporal coherence and moderate perturbation. Anti-habituation in a fixed sequence is not the same as adaptive curriculum design. We publish these negative results to close off a speculative research direction with data and to provide a methodological template for testing similar hypotheses.
 
-The code, analysis tools, and full statistical results for reproducing
-the empirical analysis are available in the project
-repository.\footnote{\url{https://github.com/augchan42/king-wen-agi-framework}}
+The code, analysis tools, and full statistical results are available in the project repository.\footnote{\url{https://github.com/augchan42/king-wen-agi-framework}}
 
 %% ============================================================
 \bibliographystyle{plain}
 \bibliography{references}
 
-%% ============================================================
-\section*{Acknowledgments}
+\newpage
 
-This paper was developed with assistance from Claude (Anthropic). The AI
-system helped formalize concepts and structure the mathematical framework
-while the core insights and analysis were human-directed.
+%% ============================================================
+\appendix
+\section{Full Experimental Results}\label{app:results}
+%% ============================================================
+
+\subsection{LR Schedule Modulation (RTX 2060, DEPTH=4, Seed 42)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{clccc}
+\toprule
+\textbf{Run} & \textbf{Schedule} & \textbf{Amplitude} & \textbf{val\_bpb} & \textbf{Memory (GB)} \\
+\midrule
+1 & Baseline & --- & 1.753 & 4.3 \\
+2 & Random perturbation & 0.3 & 1.731 & 4.3 \\
+3 & Shao Yong & 0.3 & 1.732 & 4.3 \\
+4 & King Wen & 0.3 & 1.785 & 4.3 \\
+5 & King Wen & 0.15 & 1.777 & 4.3 \\
+6 & King Wen & 0.5 & 1.790 & 4.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Seed Sweep Summary (RTX 2060, DEPTH=4, 30 Seeds)}
+
+Mean val\_bpb across 30 seeds: 1.756 (range 1.732--1.773, std 0.009, CV 0.51\%).
+
+\subsection{Curriculum: CUDA with Compression Ratio (RTX 2060, DEPTH=4)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Ordering} & \textbf{val\_bpb} & \textbf{vs.\ Sequential} \\
+\midrule
+Sequential & 1.778 & --- \\
+Random & 1.627 & $-0.151$ \\
+Easy-to-hard & 1.634 & $-0.144$ \\
+Hard-to-easy & 1.634 & $-0.144$ \\
+King Wen & 1.638 & $-0.140$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Hardware Specifications}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lllll}
+\toprule
+\textbf{Platform} & \textbf{GPU} & \textbf{VRAM} & \textbf{Framework} & \textbf{Precision} \\
+\midrule
+CUDA & NVIDIA RTX 2060 & 6\,GB & PyTorch + \texttt{torch.compile} & fp32 \\
+MLX & Apple M-series & 96\,GB unified & MLX & fp32 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+\section{Code and Data Availability}\label{app:code}
+%% ============================================================
+
+Experimental code, ADR documents, and raw results are available at:
+
+\begin{itemize}
+\tightlist
+\item King Wen AGI Framework: \url{https://github.com/augchan42/king-wen-agi-framework}
+\item Autoresearch experiments: documented in ADR-001 through ADR-008
+\end{itemize}
+
+The autoresearch framework by Andrej Karpathy provides the experimental infrastructure. All experiments use a fixed 5-minute training budget with val\_bpb as the single evaluation metric.
 
 \end{document}
