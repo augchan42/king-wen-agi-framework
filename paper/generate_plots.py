@@ -89,19 +89,30 @@ def compute_sequence_metrics(sequence):
 ALL_HEXAGRAMS = [format(i, '06b') for i in range(64)]
 
 # King Wen sequence (traditional ordering, binary representations)
+# Binary encoding: bottom-to-top, lower trigram = bits 0-2, upper trigram = bits 3-5
+# Trigrams: Earth=000, Thunder=001, Water=010, Lake=011, Mountain=100, Fire=101, Wind=110, Heaven=111
+# Source: warringstates-day/src/data/sequence/overview.json (verified against traditional trigram definitions)
 king_wen_sequence = [
-    "111111", "000000", "100010", "010001", "111010", "010111",
-    "010000", "000010", "111011", "110111", "111000", "000111",
-    "101111", "111101", "001000", "000100", "100110", "011001",
-    "110000", "000011", "100101", "101001", "000001", "100000",
-    "100111", "111001", "100001", "011110", "101000", "000101",
-    "100011", "110100", "111100", "001111", "110001", "100011",
-    "111110", "011111", "111100", "001100", "001011", "010100",
-    "010110", "011010", "101101", "110110", "110101", "101011",
-    "011011", "011000", "101010", "010101", "011001", "100110",
-    "100010", "010001", "010011", "110010", "110011", "001110",
-    "101111", "111101", "011011", "011000"
+    "111111", "000000", "100010", "010001", "111010", "010111",  # 1-6
+    "010000", "000010", "111011", "110111", "111000", "000111",  # 7-12
+    "101111", "111101", "001000", "000100", "100110", "011001",  # 13-18
+    "110000", "000011", "100101", "101001", "000001", "100000",  # 19-24
+    "100111", "111001", "100001", "011110", "010010", "101101",  # 25-30
+    "001110", "011100", "001111", "111100", "000101", "101000",  # 31-36
+    "101011", "110101", "001010", "010100", "110001", "100011",  # 37-42
+    "111110", "011111", "000110", "011000", "010110", "011010",  # 43-48
+    "101110", "011101", "100100", "001001", "001011", "110100",  # 49-54
+    "101100", "001101", "011011", "110110", "010011", "110010",  # 55-60
+    "110011", "001100", "101010", "010101",                      # 61-64
 ]
+
+# Validate sequence integrity
+assert len(king_wen_sequence) == 64, f"King Wen sequence must have 64 entries, got {len(king_wen_sequence)}"
+assert len(set(king_wen_sequence)) == 64, (
+    f"King Wen sequence must have 64 unique entries, got {len(set(king_wen_sequence))}. "
+    "WARNING: This sequence contains duplicates and needs to be corrected against "
+    "a verified hexagram-to-binary lookup table."
+)
 
 # Natural binary ordering (0-63)
 binary_ordering = ALL_HEXAGRAMS[:]

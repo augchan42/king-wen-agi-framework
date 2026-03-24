@@ -50,7 +50,7 @@ def get_king_wen_lr_multiplier(progress, base_amplitude=0.3, warmup_ratio=0.0,
     # Standard envelope (warmup → constant → warmdown)
     if progress < warmup_ratio:
         envelope = progress / warmup_ratio if warmup_ratio > 0 else 1.0
-    elif progress < 1.0 - warmdown_ratio:
+    elif warmdown_ratio <= 0 or progress < 1.0 - warmdown_ratio:
         envelope = 1.0
     else:
         cooldown = (1.0 - progress) / warmdown_ratio
@@ -80,7 +80,7 @@ def get_random_perturbation_lr_multiplier(progress, seed=42, base_amplitude=0.3,
     """
     if progress < warmup_ratio:
         envelope = progress / warmup_ratio if warmup_ratio > 0 else 1.0
-    elif progress < 1.0 - warmdown_ratio:
+    elif warmdown_ratio <= 0 or progress < 1.0 - warmdown_ratio:
         envelope = 1.0
     else:
         cooldown = (1.0 - progress) / warmdown_ratio
@@ -104,7 +104,7 @@ def get_shao_yong_lr_multiplier(progress, base_amplitude=0.3, warmup_ratio=0.0,
     """
     if progress < warmup_ratio:
         envelope = progress / warmup_ratio if warmup_ratio > 0 else 1.0
-    elif progress < 1.0 - warmdown_ratio:
+    elif warmdown_ratio <= 0 or progress < 1.0 - warmdown_ratio:
         envelope = 1.0
     else:
         cooldown = (1.0 - progress) / warmdown_ratio

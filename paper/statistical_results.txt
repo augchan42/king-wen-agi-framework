@@ -6,7 +6,7 @@ STATISTICAL ANALYSIS: King Wen Sequence vs. Baselines
 
 Ordering                 Mean      Std      Min      Max   Variance
 ----------------------------------------------------------------
-King Wen               0.7807   0.5991   0.1532   2.3026   0.358977
+King Wen               0.8424   0.6242   0.1555   2.3026   0.389641
 Binary                 0.4819   0.4025   0.1985   1.7453   0.161997
 Shao Yong              0.2702   0.3479   0.1054   2.0715   0.121046
 Random (mean)          0.7107   0.4530   0.1054   2.3026   0.202126
@@ -15,23 +15,23 @@ Random (mean)          0.7107   0.4530   0.1054   2.3026   0.202126
 
 Comparison                            KS Statistic      p-value  Significant
 ---------------------------------------------------------------------------
-King Wen vs. Random (pooled)                0.0999     0.523105           no
-King Wen vs. Binary                         0.4127     0.000035          YES
-King Wen vs. Shao Yong                      0.6984     0.000000          YES
+King Wen vs. Random (pooled)                0.1071     0.435222           no
+King Wen vs. Binary                         0.4603     0.000002          YES
+King Wen vs. Shao Yong                      0.7302     0.000000          YES
 
 --- Levene's Test (Variance Equality) ---
 
 Comparison                               Statistic      p-value   KW Lower Var
 -----------------------------------------------------------------------------
-King Wen vs. Random (pooled)                6.5443     0.010525             no
-King Wen vs. Binary                         4.1927     0.042710             no
-King Wen vs. Shao Yong                     14.5444     0.000215             no
+King Wen vs. Random (pooled)                6.8722     0.008757             no
+King Wen vs. Binary                         3.8241     0.052770             no
+King Wen vs. Shao Yong                     12.8946     0.000473             no
 
 --- Ljung-Box Test (Autocorrelation, lag=5) ---
 
 Ordering               LB Statistic      p-value  Significant
 ------------------------------------------------------------
-King Wen                     9.0662     0.106454           no
+King Wen                     4.7031     0.453183           no
 Binary                      83.9521     0.000000          YES
 Shao Yong                   18.7632     0.002127          YES
 Random               39/1000 permutations show significant autocorrelation
@@ -40,6 +40,6 @@ Random               39/1000 permutations show significant autocorrelation
 
 Ordering                Lag 1    Lag 2    Lag 3    Lag 4    Lag 5
 --------------------------------------------------------------
-King Wen              -0.2061   0.0597  -0.0857  -0.0586  -0.2895
+King Wen              -0.1734   0.0587  -0.1115  -0.1130  -0.1606
 Binary                -0.5080   0.2271  -0.5133   0.6712  -0.5044
 Shao Yong             -0.2289  -0.0754  -0.2349   0.3352  -0.2306
