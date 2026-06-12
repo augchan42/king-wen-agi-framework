@@ -68,6 +68,13 @@ This repository is archived on Zenodo for long-term preservation. You can find s
 - [Latest Release](https://doi.org/10.5281/zenodo.14679537)
 - [All Versions](https://zenodo.org/records/14679537)
 
+## Acknowledgements
+
+The LaTeX preprint styling (`arxiv.sty`) is adapted from George Kour's
+[arxiv-style](https://github.com/kourgeorge/arxiv-style) project (itself based on
+`nips_2018.sty`). The research, code, and paper in this repository are original work
+by Augustin Chan; the upstream contribution is the document-formatting template.
+
 ## Contact
 
 For questions or issues, please:
