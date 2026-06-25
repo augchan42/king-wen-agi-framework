@@ -61,6 +61,12 @@ S(H_i, H_{i+1}) = -log P(H_{i+1} | H_i)
 
 where conditional probability is modeled via pattern similarity incorporating traditional line position weights [0.03, 0.07, 0.15, 0.20, 0.25, 0.30] from bottom to top, with yang-to-yin transitions weighted at 0.7x the reverse. Total similarity combines external (line-level) and internal (nuclear hexagram) components with lambda=0.4 weighting the nuclear component.
 
+Figure 1 shows these three transition metrics---Hamming distance, pattern similarity, and information-theoretic surprise---across the King Wen sequence's 63 consecutive transitions.
+
+![Transition metrics across the 63 consecutive hexagram transitions of the King Wen sequence: Hamming distance (top), pattern similarity (middle), and information-theoretic surprise (bottom).](king_wen_metrics.png)
+
+**Figure 1:** Transition metrics across the 63 consecutive hexagram transitions of the King Wen sequence. *Top:* Hamming distance (number of differing lines, range 0--6). *Middle:* pattern similarity incorporating traditional line-position weights. *Bottom:* information-theoretic surprise. The surprise profile alternates between high and low values, consistent with the sequence's negative lag-1 autocorrelation.
+
 ### 3.3 Monte Carlo Permutation Analysis
 
 We compare the King Wen sequence against 100,000 random permutations of the same 64 hexagrams. Four properties are statistically significant:
@@ -75,7 +81,7 @@ We compare the King Wen sequence against 100,000 random permutations of the same
 
 ### 3.4 Comparison with Systematic Orderings
 
-We compare the surprise distributions of four orderings across all 63 consecutive transitions:
+We compare the surprise distributions of four orderings across all 63 consecutive transitions (Figure 2):
 
 | Ordering | Mean Surprise | Std | Variance | Range |
 |---|---|---|---|---|
@@ -83,6 +89,10 @@ We compare the surprise distributions of four orderings across all 63 consecutiv
 | Random (mean of 1000) | 0.711 | 0.453 | 0.202 | 0.11--2.30 |
 | Binary | 0.482 | 0.403 | 0.162 | 0.20--1.75 |
 | Shao Yong | 0.270 | 0.348 | 0.121 | 0.11--2.07 |
+
+![Information-theoretic surprise across all 63 transitions for four orderings: King Wen (top-left), the random ensemble with 95% CI (top-right), natural binary (bottom-left), and Shao Yong (bottom-right).](king_wen_comparison.png)
+
+**Figure 2:** Information-theoretic surprise across all 63 transitions for four orderings. *Top-left:* King Wen, with mean and ±1σ band. *Top-right:* mean and 95% confidence interval over 1,000 random permutations. *Bottom-left:* natural binary ordering. *Bottom-right:* Shao Yong ordering. King Wen resembles the random ensemble in mean surprise but exhibits higher variance, whereas binary and Shao Yong are smoother and strongly autocorrelated.
 
 **Distribution shape (Kolmogorov-Smirnov test):** King Wen is not significantly different from random (D=0.11, p=0.44), but is highly significantly different from binary (D=0.46, p<0.001) and Shao Yong (D=0.73, p<0.001).
 
