@@ -27,7 +27,7 @@ We make four contributions:
 
 ### 2.1 Curriculum Learning
 
-Bengio et al. (2009) formalized the intuition that training machine learning models in a meaningful order---from simple to complex examples---improves convergence and generalization. Graves et al. (2017) extended this to automated curriculum learning, using multi-armed bandit algorithms to select training tasks. Wang et al. (2022) survey the field, distinguishing difficulty measurers from training schedulers. Recent work has shown that curriculum ordering interacts strongly with learning rate schedules (Agarwal et al., 2025) and that simple difficulty metrics (compression ratio, lexical diversity) are effective at scale (Jia et al., 2025).
+Bengio et al. (2009) formalized the intuition that training machine learning models in a meaningful order---from simple to complex examples---improves convergence and generalization. Graves et al. (2017) extended this to automated curriculum learning, using multi-armed bandit algorithms to select training tasks. Wang et al. (2022) survey the field, distinguishing difficulty measurers from training schedulers. Recent work has shown that curriculum ordering interacts strongly with learning rate schedules (Luo et al., 2025) and that simple difficulty metrics (compression ratio, lexical diversity) are effective at scale (Zhang et al., 2025).
 
 ### 2.2 I-Ching in Computational Intelligence
 
@@ -96,7 +96,7 @@ The King Wen sequence is neither random nor algebraically systematic. It occupie
 
 ## 4. Experimental Evaluation
 
-We test the hypothesis that the King Wen sequence's anti-habituation properties improve neural network training. We conduct three experiments using Karpathy's autoresearch framework, which runs fixed-duration (5-minute) training experiments on a small GPT language model and evaluates using validation bits per byte (val_bpb; lower is better).
+We test the hypothesis that the King Wen sequence's anti-habituation properties improve neural network training. We conduct three experiments using the autoresearch framework---Karpathy's lightweight experiment runner, together with an MLX port for the Apple Silicon experiments (Appendix B)---which runs fixed-duration (5-minute) training experiments on a small GPT language model and evaluates using validation bits per byte (val_bpb; lower is better).
 
 ### 4.1 Experimental Setup
 
@@ -149,7 +149,7 @@ All reorderings beat sequential, but random shuffle wins. King Wen is the worst 
 
 #### MLX Results (Apple Silicon, DEPTH=4, compression ratio metric)
 
-We repeat the experiment on MLX with five orderings (Shao Yong is dropped as it performed identically to random perturbation in the LR experiments and is structurally similar to easy-to-hard). Two LR regimes are tested: standard warmdown and constant LR, following the finding that LR decay can suppress curriculum benefits (Agarwal et al., 2025).
+We repeat the experiment on MLX with five orderings (Shao Yong is dropped as it performed identically to random perturbation in the LR experiments and is structurally similar to easy-to-hard). Two LR regimes are tested: standard warmdown and constant LR, following the finding that LR decay can suppress curriculum benefits (Luo et al., 2025).
 
 | Ordering | Standard Warmdown | Constant LR |
 |---|---|---|
@@ -232,29 +232,29 @@ The central lesson is the gap between "statistically interesting" and "useful fo
 
 ## References
 
-[1] Agarwal, A. et al. (2025). "How LR Decay Wastes Your Best Data in Curriculum-Based Pretraining." arXiv:2511.18903.
+[1] Bengio, Y., Louradour, J., Collobert, R., & Weston, J. (2009). "Curriculum Learning." ICML.
 
-[2] Bengio, Y., Louradour, J., Collobert, R., & Weston, J. (2009). "Curriculum Learning." ICML.
+[2] Chen, C. L. P., Zhang, T., Chen, L., & Tam, S. C. (2016). "I-Ching Divination Evolutionary Algorithm and its Convergence Analysis." IEEE Transactions on Cybernetics, 47(1), 1-12.
 
-[3] Chen, C. L. P., Zhang, T., Chen, L., & Tam, S. C. (2016). "I-Ching Divination Evolutionary Algorithm and its Convergence Analysis." IEEE Transactions on Cybernetics, 47(1), 1-12.
+[3] Choi, S., Gazeley, W., Wong, S. H., & Li, T. (2023). "Conversational Factor Information Retrieval Model (ConFIRM)." arXiv:2310.13001.
 
-[4] Choi, S., Gazeley, W., Wong, S. H., & Li, T. (2023). "Conversational Factor Information Retrieval Model (ConFIRM)." arXiv:2310.13001.
+[4] Graves, A., Bellemare, M. G., Menick, J., Munos, R., & Kavukcuoglu, K. (2017). "Automated Curriculum Learning for Neural Networks." ICML.
 
-[5] Graves, A., Bellemare, M. G., Menick, J., Munos, R., & Kavukcuoglu, K. (2017). "Automated Curriculum Learning for Neural Networks." ICML.
+[5] Itti, L. & Baldi, P. (2009). "Bayesian Surprise Attracts Human Attention." Vision Research, 49(10), 1295-1306.
 
-[6] Itti, L. & Baldi, P. (2009). "Bayesian Surprise Attracts Human Attention." Vision Research, 49(10), 1295-1306.
+[6] Leibniz, G. W. (1703). "Explication de l'Arithmetique Binaire." Memoires de l'Academie Royale des Sciences.
 
-[7] Jia, Z. et al. (2025). "Beyond Random Sampling: Curriculum Learning for LM Pretraining." arXiv:2506.11300.
+[7] Luo, K., Sun, Z., Wen, H., Shi, X., Cui, J., Dang, C., Lyu, K., & Chen, W. (2025). "How Learning Rate Decay Wastes Your Best Data in Curriculum-Based LLM Pretraining." arXiv:2511.18903.
 
-[8] Leibniz, G. W. (1703). "Explication de l'Arithmetique Binaire." Memoires de l'Academie Royale des Sciences.
+[8] Nielsen, F. (2020). "An Elementary Introduction to Information Geometry." Entropy, 22(10), 1100.
 
-[9] Nielsen, F. (2020). "An Elementary Introduction to Information Geometry." Entropy, 22(10), 1100.
+[9] Schmidhuber, J. (2006). "Developmental robotics, optimal artificial curiosity, creativity, music, and the fine arts." Connection Science, 18(2), 173-187.
 
-[10] Schmidhuber, J. (2006). "Developmental robotics, optimal artificial curiosity, creativity, music, and the fine arts." Connection Science, 18(2), 173-187.
+[10] Wang, X., Chen, Y., & Zhu, W. (2022). "A Survey on Curriculum Learning." IEEE TPAMI, 44(9), 4555-4576.
 
-[11] Wang, X., Chen, Y., & Zhu, W. (2022). "A Survey on Curriculum Learning." IEEE TPAMI, 44(9), 4555-4576.
+[11] Zhang, T., Lei, C., Zhang, Z., Meng, X., & Chen, C. L. P. (2021). "AS-NAS: Adaptive Scalable Neural Architecture Search." IEEE Transactions on Evolutionary Computation, 25(5), 840-854.
 
-[12] Zhang, T., Lei, C., Zhang, Z., Meng, X., & Chen, C. L. P. (2021). "AS-NAS: Adaptive Scalable Neural Architecture Search." IEEE Transactions on Evolutionary Computation, 25(5), 840-854.
+[12] Zhang, Y., Mohamed, A., Abdine, H., Shang, G., & Vazirgiannis, M. (2025). "Beyond Random Sampling: Efficient Language Model Pretraining via Curriculum Learning." arXiv:2506.11300.
 
 ## Appendix A: Full Experimental Results
 
@@ -335,6 +335,7 @@ Mean val_bpb across 30 seeds: 1.756 (range 1.732--1.773, std 0.009, CV 0.51%).
 Experimental code, ADR documents, and raw results are available at:
 
 - King Wen AGI Framework: https://github.com/augchan42/king-wen-agi-framework
-- Autoresearch experiments: documented in ADR-001 through ADR-008
+- NVIDIA/CUDA experiments: documented in ADR-001 through ADR-008 in our autoresearch fork: https://github.com/digital-rain-tech/autoresearch
+- Apple Silicon (MLX) experiments: in our autoresearch-mlx fork: https://github.com/digital-rain-tech/autoresearch-mlx
 
-The autoresearch framework by Andrej Karpathy provides the experimental infrastructure. All experiments use a fixed 5-minute training budget with val_bpb as the single evaluation metric.
+The autoresearch framework by Andrej Karpathy provides the experimental infrastructure for the NVIDIA/CUDA experiments (our fork above); the Apple Silicon experiments use autoresearch-mlx, an MLX port by trevin-creator (https://github.com/trevin-creator/autoresearch-mlx) that we forked. All experiments use a fixed 5-minute training budget with val_bpb as the single evaluation metric.

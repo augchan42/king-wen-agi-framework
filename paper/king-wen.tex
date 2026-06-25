@@ -58,7 +58,7 @@ We make four contributions:
 
 \subsection{Curriculum Learning}
 
-Bengio et al.\ \cite{bengio2009curriculum} formalized the intuition that training machine learning models in a meaningful order---from simple to complex examples---improves convergence and generalization. Graves et al.\ \cite{graves2017automated} extended this to automated curriculum learning, using multi-armed bandit algorithms to select training tasks. Wang et al.\ \cite{wang2021curriculum} survey the field, distinguishing difficulty measurers from training schedulers. Recent work has shown that curriculum ordering interacts strongly with learning rate schedules \cite{agarwal2025lrdecay} and that simple difficulty metrics (compression ratio, lexical diversity) are effective at scale \cite{jia2025curriculum}.
+Bengio et al.\ \cite{bengio2009curriculum} formalized the intuition that training machine learning models in a meaningful order---from simple to complex examples---improves convergence and generalization. Graves et al.\ \cite{graves2017automated} extended this to automated curriculum learning, using multi-armed bandit algorithms to select training tasks. Wang et al.\ \cite{wang2021curriculum} survey the field, distinguishing difficulty measurers from training schedulers. Recent work has shown that curriculum ordering interacts strongly with learning rate schedules \cite{luo2025lrdecay} and that simple difficulty metrics (compression ratio, lexical diversity) are effective at scale \cite{zhang2025curriculum}.
 
 \subsection{I-Ching in Computational Intelligence}
 
@@ -97,6 +97,15 @@ S(H_i, H_{i+1}) = -\log P(H_{i+1} \mid H_i)
 \end{equation}
 where conditional probability is modeled via pattern similarity incorporating traditional line position weights $[0.03, 0.07, 0.15, 0.20, 0.25, 0.30]$ from bottom to top, with yang-to-yin transitions weighted at $0.7\times$ the reverse. Total similarity combines external (line-level) and internal (nuclear hexagram) components with $\lambda = 0.4$ weighting the nuclear component.
 
+Figure~\ref{fig:metrics} shows these three transition metrics---Hamming distance, pattern similarity, and information-theoretic surprise---across the King Wen sequence's 63 consecutive transitions.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{king_wen_metrics}
+\caption{Transition metrics across the 63 consecutive hexagram transitions of the King Wen sequence. \textbf{Top:} Hamming distance (number of differing lines, range 0--6). \textbf{Middle:} pattern similarity incorporating traditional line-position weights. \textbf{Bottom:} information-theoretic surprise $S(H_i, H_{i+1}) = -\log P(H_{i+1} \mid H_i)$. The surprise profile alternates between high and low values, consistent with the sequence's negative lag-1 autocorrelation.}
+\label{fig:metrics}
+\end{figure}
+
 \subsection{Monte Carlo Permutation Analysis}
 
 We compare the King Wen sequence against 100,000 random permutations of the same 64 hexagrams. Four properties are statistically significant:
@@ -111,7 +120,7 @@ We compare the King Wen sequence against 100,000 random permutations of the same
 
 \subsection{Comparison with Systematic Orderings}
 
-We compare the surprise distributions of four orderings across all 63 consecutive transitions (Table~\ref{tab:stats}).
+We compare the surprise distributions of four orderings across all 63 consecutive transitions (Table~\ref{tab:stats}, Figure~\ref{fig:comparison}).
 
 \begin{table}[h]
 \centering
@@ -129,6 +138,13 @@ Shao Yong   & 0.270 & 0.348 & 0.121 & 0.11--2.07 \\
 \label{tab:stats}
 \end{table}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{king_wen_comparison}
+\caption{Information-theoretic surprise across all 63 transitions for four orderings. \textbf{Top-left:} King Wen, with mean (dashed) and $\pm 1\sigma$ band, showing high-variance, full-spectrum surprise. \textbf{Top-right:} mean and 95\% confidence interval over 1{,}000 random permutations. \textbf{Bottom-left:} natural binary ordering. \textbf{Bottom-right:} Shao Yong ordering. King Wen resembles the random ensemble in mean surprise but exhibits higher variance, whereas binary and Shao Yong are smoother and strongly autocorrelated.}
+\label{fig:comparison}
+\end{figure}
+
 \textbf{Distribution shape (Kolmogorov-Smirnov test):} King Wen is not significantly different from random ($D = 0.11$, $p = 0.44$), but is highly significantly different from binary ($D = 0.46$, $p < 0.001$) and Shao Yong ($D = 0.73$, $p < 0.001$).
 
 \textbf{Variance (Levene's test):} King Wen has significantly higher variance than random ($p = 0.009$) and Shao Yong ($p < 0.001$). The difference versus binary is marginal ($p = 0.053$).
@@ -143,7 +159,7 @@ The King Wen sequence is neither random nor algebraically systematic. It occupie
 \section{Experimental Evaluation}\label{sec:experiments}
 %% ============================================================
 
-We test the hypothesis that the King Wen sequence's anti-habituation properties improve neural network training. We conduct three experiments using Karpathy's autoresearch framework, which runs fixed-duration (5-minute) training experiments on a small GPT language model and evaluates using validation bits per byte (val\_bpb; lower is better).
+We test the hypothesis that the King Wen sequence's anti-habituation properties improve neural network training. We conduct three experiments using the autoresearch framework---Karpathy's lightweight experiment runner, together with an MLX port for the Apple Silicon experiments (Appendix~\ref{app:code})---which runs fixed-duration (5-minute) training experiments on a small GPT language model and evaluates using validation bits per byte (val\_bpb; lower is better).
 
 \subsection{Experimental Setup}
 
@@ -214,7 +230,7 @@ All reorderings beat sequential (Table~\ref{tab:cuda}), but random shuffle wins.
 
 \subsubsection{MLX Results (Apple Silicon, DEPTH=4, Compression Ratio)}
 
-We repeat the experiment on MLX with five orderings (Shao Yong dropped as structurally similar to easy-to-hard). Two LR regimes are tested: standard warmdown and constant LR, following the finding that LR decay can suppress curriculum benefits \cite{agarwal2025lrdecay}.
+We repeat the experiment on MLX with five orderings (Shao Yong dropped as structurally similar to easy-to-hard). Two LR regimes are tested: standard warmdown and constant LR, following the finding that LR decay can suppress curriculum benefits \cite{luo2025lrdecay}.
 
 \begin{table}[h]
 \centering
@@ -403,9 +419,10 @@ Experimental code, ADR documents, and raw results are available at:
 \begin{itemize}
 \tightlist
 \item King Wen AGI Framework: \url{https://github.com/augchan42/king-wen-agi-framework}
-\item Autoresearch experiments: documented in ADR-001 through ADR-008
+\item NVIDIA/CUDA experiments: documented in ADR-001 through ADR-008 in our autoresearch fork: \url{https://github.com/digital-rain-tech/autoresearch}
+\item Apple Silicon (MLX) experiments: in our autoresearch-mlx fork: \url{https://github.com/digital-rain-tech/autoresearch-mlx}
 \end{itemize}
 
-The autoresearch framework by Andrej Karpathy provides the experimental infrastructure. All experiments use a fixed 5-minute training budget with val\_bpb as the single evaluation metric.
+The autoresearch framework by Andrej Karpathy provides the experimental infrastructure for the NVIDIA/CUDA experiments (our fork above); the Apple Silicon experiments use autoresearch-mlx, an MLX port by trevin-creator (\url{https://github.com/trevin-creator/autoresearch-mlx}) that we forked. All experiments use a fixed 5-minute training budget with val\_bpb as the single evaluation metric.
 
 \end{document}

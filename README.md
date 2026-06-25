@@ -70,10 +70,11 @@ This repository is archived on Zenodo for long-term preservation. You can find s
 
 ## Acknowledgements
 
-The LaTeX preprint styling (`arxiv.sty`) is adapted from George Kour's
-[arxiv-style](https://github.com/kourgeorge/arxiv-style) project (itself based on
-`nips_2018.sty`). The research, code, and paper in this repository are original work
-by Augustin Chan; the upstream contribution is the document-formatting template.
+- **Experimental framework:** the experiments build on [autoresearch](https://github.com/karpathy/autoresearch) by Andrej Karpathy; the NVIDIA/CUDA experiments use [our fork](https://github.com/digital-rain-tech/autoresearch).
+- **MLX port:** the Apple Silicon experiments use [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) by trevin-creator, which we [forked](https://github.com/digital-rain-tech/autoresearch-mlx).
+- **Preprint styling:** `arxiv.sty` is adapted from George Kour's [arxiv-style](https://github.com/kourgeorge/arxiv-style) project (itself based on `nips_2018.sty`).
+
+The research design, statistical analysis, experiments, and paper in this repository are original work by Augustin Chan.
 
 ## Contact
 
